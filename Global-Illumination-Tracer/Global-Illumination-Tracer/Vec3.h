@@ -1,0 +1,44 @@
+#pragma once
+#include <stdlib.h>
+#include <iostream>
+
+class Vec3
+{
+	public:
+		double v[3];
+
+		Vec3() {}
+		Vec3(double v0, double v1, double v2) { v[0] = v0, v[1] = v1, v[2] = v2; }
+		inline double x() const { return v[0]; }
+		inline double y() const { return v[1]; }
+		inline double z() const { return v[2]; }
+
+		inline const Vec3& operator+() const { return *this; }
+		inline Vec3 operator-() const { return Vec3(-v[0], -v[1], -v[2]); }
+		inline double operator[](int i) const { return v[i]; }
+		inline double& operator[](int i) { return v[i]; }
+
+		Vec3& operator+=(const Vec3& v1);
+		Vec3& operator-=(const Vec3& v1);
+		Vec3& operator*=(const Vec3& v1);
+		Vec3& operator/=(const Vec3& v1);
+		Vec3& operator*=(const double t);
+		Vec3& operator/=(const double t);
+
+		inline float squaredLength() const {
+			return (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+		}
+		inline float length() const {
+			return sqrt(squaredLength());
+		}
+
+		//std::ostream& operator<<(std::ostream& os, const Vec3& t);
+		//std::istream& operator>>(std::istream& is, Vec3& t);
+
+		void makeUnitVector();
+		double dot(const Vec3 &v1, const Vec3 &v2);
+		Vec3 cross(const Vec3 &v1, const Vec3 &v2);
+		Vec3 unitVector(Vec3 v1);
+
+};
+
