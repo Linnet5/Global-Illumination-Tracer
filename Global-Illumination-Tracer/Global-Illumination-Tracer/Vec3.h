@@ -25,6 +25,7 @@ class Vec3
 		Vec3& operator*=(const double t);
 		Vec3& operator/=(const double t);
 
+
 		inline float squaredLength() const {
 			return (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 		}
@@ -41,4 +42,33 @@ class Vec3
 		Vec3 unitVector(Vec3 v1);
 
 };
+
+Vec3 operator-(const Vec3& v1, const Vec3& v2) {
+	return Vec3(v1.v[0] - v2.v[0], v1.v[1] - v2.v[1], v1.v[2] - v2.v[2]);
+}
+
+Vec3 operator+(const Vec3& v1, const Vec3& v2) {
+	return Vec3(v1.v[0] + v2.v[0], v1.v[1] + v2.v[1], v1.v[2] + v2.v[2]);
+}
+
+
+Vec3 operator*(const Vec3& v1, const Vec3& v2) {
+	return Vec3(v1.v[0] * v2.v[0], v1.v[1] * v2.v[1], v1.v[2] * v2.v[2]);
+}
+
+Vec3 operator/(const Vec3& v1, const Vec3& v2) {
+	return Vec3(v1.v[0] / v2.v[0], v1.v[1] / v2.v[1], v1.v[2] / v2.v[2]);
+}
+
+Vec3 operator*(float t, const Vec3& v) {
+	return Vec3(t * v.v[0], t * v.v[1], t * v.v[2]);
+}
+
+Vec3 operator/(const Vec3& v, float t) {
+	return Vec3(v.v[0] / t, v.v[1] / t, v.v[2] / t);
+}
+
+Vec3 operator*(const Vec3& v, float t) {
+	return Vec3(t * v.v[0], t * v.v[1], t * v.v[2]);
+}
 

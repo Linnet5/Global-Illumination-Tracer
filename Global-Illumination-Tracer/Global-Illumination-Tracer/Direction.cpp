@@ -1,14 +1,14 @@
 #include "Direction.h"
 
 Direction::Direction() {
-	x = 0;
-	y = 0;
-	z = 0;
+	direction = Vec3(0,0,0);
 }
 
 
 Direction::Direction(double inX, double inY, double inZ){
-	x = inX;
-	y = inY;
-	z = inZ;
+	direction = Vec3(inX,inY,inZ);
+}
+
+Direction::Direction(Vec3 inVec) {
+	direction = inVec;
 }

@@ -7,9 +7,9 @@ class Triangle
 {
 private:
 	//Vars
+	Vertex v0;
 	Vertex v1;
 	Vertex v2;
-	Vertex v3;
 
 	ColorDbl color;
 	Direction dir;
@@ -20,7 +20,8 @@ private:
 
 public:
 	Triangle();
-	Triangle(Vertex inV1, Vertex inV2, Vertex inV3, ColorDbl inColor);
+	Triangle(Vertex inV0, Vertex inV1, Vertex inV2, ColorDbl inColor);
+	bool mollerTrumbore(Vec3 rayOrigin, Vec3 rayDirection, Vec3& intersectionPoint);
 };
 
 

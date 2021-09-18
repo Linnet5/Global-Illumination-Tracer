@@ -1,13 +1,13 @@
 #pragma once
+#include "Vec3.h"
 class Direction
 {
 private:
-	double x;
-	double y;
-	double z;
+	Vec3 direction;
 
 public:
 	Direction();
 	Direction(double inX, double inY, double inZ);
+	Direction(Vec3 inVec);
 };
 

@@ -1,12 +1,11 @@
 #include "ColorDbl.h"
 ColorDbl::ColorDbl() {
-	r = 0;
-	g = 0;
-	b = 0;
+	values = Vec3(0, 0, 0);
+}
+ColorDbl::ColorDbl(double inR, double inG, double inB){
+	values = Vec3(inR, inG, inB);
 }
 
-ColorDbl::ColorDbl(double inR, double inG, double inB){
-	r = inR;	
-	g = inG;
-	b = inB;
+ColorDbl::ColorDbl(Vec3 inVec) {
+	values = inVec;
 }

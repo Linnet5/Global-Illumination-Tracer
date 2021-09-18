@@ -2,37 +2,41 @@
 
 //Def constructor
 Vertex::Vertex() {
-	x = 0;
-	y = 0;
-	z = 0;
+	cords = Vec3(0, 0, 0);
 }
 
 Vertex::Vertex(double inX, double inY, double inZ){
-	x = inX;
-	y = inY;
-	z = inZ;
+	cords = Vec3(inX, inY, inZ);
+}
+
+Vertex::Vertex(Vec3 inVec){
+	cords = inVec;
 }
 
 //Copy operator overload
-Vertex Vertex::operator=(const Vertex& other) {
-	x = other.x;
-	y = other.y;
-	z = other.z; 
+void Vertex::operator=(const Vertex& other) {
+	cords = other.cords;
 }
 
-Vertex Vertex::operator-(const Vertex& other) {
-	return Vertex(x - other.x, y - other.y, z - other.z);
+
+Vertex Vertex::operator-(Vertex& other) {
+	Vertex temp = cords - other.cords;
+	return temp;
+}
+
+Vec3 Vertex::getCords() {
+	return cords;
 }
 
 double Vertex::getX() {
-	return x;
+	return cords.x();
 }
 
 double Vertex::getY() {
-	return y;
+	return cords.y();
 }
 
 double Vertex::getZ() {
-	return z;
+	return cords.z();
 }
 
