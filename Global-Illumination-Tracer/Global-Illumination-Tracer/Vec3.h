@@ -7,7 +7,7 @@ class Vec3
 	public:
 		double v[3];
 
-		Vec3() {}
+		Vec3() { v[0] = 0, v[1] = 0, v[2] = 0; }
 		Vec3(double v0, double v1, double v2) { v[0] = v0, v[1] = v1, v[2] = v2; }
 		inline double x() const { return v[0]; }
 		inline double y() const { return v[1]; }
@@ -26,10 +26,10 @@ class Vec3
 		Vec3& operator/=(const double t);
 
 
-		inline float squaredLength() const {
+		inline double squaredLength() const {
 			return (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 		}
-		inline float length() const {
+		inline double length() const {
 			return sqrt(squaredLength());
 		}
 
@@ -43,32 +43,32 @@ class Vec3
 
 };
 
-Vec3 operator-(const Vec3& v1, const Vec3& v2) {
+inline Vec3 operator-(const Vec3& v1, const Vec3& v2) {
 	return Vec3(v1.v[0] - v2.v[0], v1.v[1] - v2.v[1], v1.v[2] - v2.v[2]);
 }
 
-Vec3 operator+(const Vec3& v1, const Vec3& v2) {
+inline Vec3 operator+(const Vec3& v1, const Vec3& v2) {
 	return Vec3(v1.v[0] + v2.v[0], v1.v[1] + v2.v[1], v1.v[2] + v2.v[2]);
 }
 
 
-Vec3 operator*(const Vec3& v1, const Vec3& v2) {
+inline Vec3 operator*(const Vec3& v1, const Vec3& v2) {
 	return Vec3(v1.v[0] * v2.v[0], v1.v[1] * v2.v[1], v1.v[2] * v2.v[2]);
 }
 
-Vec3 operator/(const Vec3& v1, const Vec3& v2) {
+inline Vec3 operator/(const Vec3& v1, const Vec3& v2) {
 	return Vec3(v1.v[0] / v2.v[0], v1.v[1] / v2.v[1], v1.v[2] / v2.v[2]);
 }
 
-Vec3 operator*(float t, const Vec3& v) {
+inline Vec3 operator*(double t, const Vec3& v) {
 	return Vec3(t * v.v[0], t * v.v[1], t * v.v[2]);
 }
 
-Vec3 operator/(const Vec3& v, float t) {
+inline Vec3 operator/(const Vec3& v, double t) {
 	return Vec3(v.v[0] / t, v.v[1] / t, v.v[2] / t);
 }
 
-Vec3 operator*(const Vec3& v, float t) {
+inline Vec3 operator*(const Vec3& v, double t) {
 	return Vec3(t * v.v[0], t * v.v[1], t * v.v[2]);
 }
 

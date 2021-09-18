@@ -7,10 +7,10 @@ class Ray
 private:
 	Vertex start;
 	Vertex end;
-	Triangle endPointTriangle;
+	Triangle* endPointTriangle;
 	ColorDbl color;
 public:
 	Ray(const Vertex& inStart, const Vertex& inEnd, ColorDbl inColor);
-	void setTriangle(Triangle& triangle);
+	void setTriangle(Triangle* triangle);
 };
 

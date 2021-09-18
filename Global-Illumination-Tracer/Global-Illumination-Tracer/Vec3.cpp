@@ -6,10 +6,11 @@ std::istream& operator>>(std::istream& is, Vec3& t) {
 
 std::ostream& operator<<(std::ostream& os, const Vec3& t) {
 	os << t.v[0] << " " << t.v[1] << " " << t.v[2];
+	return os;
 }
 
 void Vec3::makeUnitVector() {
-	float k = 1.0 / sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+	double k = 1.0 / sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 	v[0] *= k;
 	v[1] *= k;
 	v[2] *= k;
@@ -26,14 +27,14 @@ Vec3 Vec3::cross(const Vec3& v1, const Vec3& v2) {
 		(v1.v[0] * v2.v[1] - v1.v[1] * v2.v[0]));
 }
 
-Vec3& Vec3::operator+=(const Vec3 & v1) {
+inline Vec3& Vec3::operator+=(const Vec3 & v1) {
 	v[0] += v1.v[0];
 	v[1] += v1.v[1];
 	v[2] += v1.v[2];
 	return *this;
 }
 
-Vec3& Vec3::operator*=(const Vec3& v1) {
+inline Vec3& Vec3::operator*=(const Vec3& v1) {
 	v[0] *= v1.v[0];
 	v[1] *= v1.v[1];
 	v[2] *= v1.v[2];
@@ -41,7 +42,7 @@ Vec3& Vec3::operator*=(const Vec3& v1) {
 	return *this;
 }
 
-Vec3& Vec3::operator/=(const Vec3& v1) {
+inline Vec3& Vec3::operator/=(const Vec3& v1) {
 	v[0] /= v1.v[0];
 	v[1] /= v1.v[1];
 	v[2] /= v1.v[2];
@@ -49,7 +50,7 @@ Vec3& Vec3::operator/=(const Vec3& v1) {
 	return *this;
 }
 
-Vec3& Vec3::operator-=(const Vec3& v1) {
+inline Vec3& Vec3::operator-=(const Vec3& v1) {
 	v[0] -= v1.v[0];
 	v[1] -= v1.v[1];
 	v[2] -= v1.v[2];
@@ -57,7 +58,7 @@ Vec3& Vec3::operator-=(const Vec3& v1) {
 	return *this;
 }
 
-Vec3& Vec3::operator*=(const double t) {
+inline Vec3& Vec3::operator*=(const double t) {
 	v[0] *= t;
 	v[1] *= t;
 	v[2] *= t;
@@ -65,7 +66,7 @@ Vec3& Vec3::operator*=(const double t) {
 	return *this;
 }
 
-Vec3& Vec3::operator/=(const double t) {
+inline Vec3& Vec3::operator/=(const double t) {
 	double k = 1.0 / t;
 	v[0] *= k;
 	v[1] *= k;
