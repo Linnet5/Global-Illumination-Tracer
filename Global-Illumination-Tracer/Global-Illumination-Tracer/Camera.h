@@ -3,6 +3,8 @@
 #include "Ray.h"
 #include "Triangle.h"
 #include <vector>
+#include "Scene.h"
+#include "EasyBMP.h"
 class Camera
 {
 	public:
@@ -12,6 +14,7 @@ class Camera
 
 		int cols = 800;
 		std::vector<std::vector<Pixel> > pixelArray; 
+		Scene scene;
 
 		//Pixel pixelArray = new Pixel [800][800];
 

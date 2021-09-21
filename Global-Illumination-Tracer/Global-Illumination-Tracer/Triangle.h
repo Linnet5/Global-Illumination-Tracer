@@ -11,7 +11,6 @@ private:
 	Vertex v1;
 	Vertex v2;
 
-	ColorDbl color;
 	Direction dir;
 
 	//Functions
@@ -19,6 +18,7 @@ private:
 
 
 public:
+	ColorDbl color;
 	Triangle();
 	Triangle(Vertex inV0, Vertex inV1, Vertex inV2, ColorDbl inColor);
 	bool mollerTrumbore(Vec3 rayOrigin, Vec3 rayDirection, Vec3& intersectionPoint);

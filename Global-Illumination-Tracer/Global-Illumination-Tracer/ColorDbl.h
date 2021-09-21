@@ -9,5 +9,6 @@ public:
 	ColorDbl();
 	ColorDbl(double inR, double inG, double inB);
 	ColorDbl(Vec3 inVec);
+	Vec3 GetValues();
 };
 

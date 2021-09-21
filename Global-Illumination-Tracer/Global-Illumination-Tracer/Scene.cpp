@@ -4,20 +4,20 @@ Scene::Scene() {
 	//Hardcoded room.
 
 	//Tak
-	room[0] = Triangle(vertexList[1], vertexList[2], vertexList[0], ColorDbl(255, 255, 255));
-	room[1] = Triangle(vertexList[2], vertexList[3], vertexList[0], ColorDbl(255, 255, 255));
-	room[2] = Triangle(vertexList[3], vertexList[4], vertexList[0], ColorDbl(255, 255, 255));
-	room[3] = Triangle(vertexList[4], vertexList[5], vertexList[0], ColorDbl(255, 255, 255));
-	room[4] = Triangle(vertexList[5], vertexList[6], vertexList[0], ColorDbl(255, 255, 255));
-	room[5] = Triangle(vertexList[6], vertexList[1], vertexList[0], ColorDbl(255, 255, 255));
+	room[0] = Triangle(vertexList[1], vertexList[2], vertexList[0], ColorDbl(200, 200, 200));
+	room[1] = Triangle(vertexList[2], vertexList[3], vertexList[0], ColorDbl(200, 200, 200));
+	room[2] = Triangle(vertexList[3], vertexList[4], vertexList[0], ColorDbl(200, 200, 200));
+	room[3] = Triangle(vertexList[4], vertexList[5], vertexList[0], ColorDbl(200, 200, 200));
+	room[4] = Triangle(vertexList[5], vertexList[6], vertexList[0], ColorDbl(200, 200, 200));
+	room[5] = Triangle(vertexList[6], vertexList[1], vertexList[0], ColorDbl(200, 200, 200));
 
 	//Golv
-	room[6] = Triangle(vertexList[8], vertexList[7], vertexList[9], ColorDbl(255, 255, 255));
-	room[7] = Triangle(vertexList[9], vertexList[7], vertexList[10], ColorDbl(255, 255, 255));
-	room[8] = Triangle(vertexList[10], vertexList[7], vertexList[11], ColorDbl(255, 255, 255));
-	room[9] = Triangle(vertexList[11], vertexList[7], vertexList[12], ColorDbl(255, 255, 255));
-	room[10] = Triangle(vertexList[12], vertexList[7], vertexList[13], ColorDbl(255, 255, 255));
-	room[11] = Triangle(vertexList[13], vertexList[7], vertexList[8], ColorDbl(255, 255, 255));
+	room[6] = Triangle(vertexList[8], vertexList[7], vertexList[9], ColorDbl(200, 200, 200));
+	room[7] = Triangle(vertexList[9], vertexList[7], vertexList[10], ColorDbl(200, 200, 200));
+	room[8] = Triangle(vertexList[10], vertexList[7], vertexList[11], ColorDbl(200, 200, 200));
+	room[9] = Triangle(vertexList[11], vertexList[7], vertexList[12], ColorDbl(200, 200, 200));
+	room[10] = Triangle(vertexList[12], vertexList[7], vertexList[13], ColorDbl(200, 200, 200));
+	room[11] = Triangle(vertexList[13], vertexList[7], vertexList[8], ColorDbl(200, 200, 200));
 
 	//Vägg 1
 	room[12] = Triangle(vertexList[1], vertexList[8], vertexList[9], ColorDbl(255, 0, 0));
