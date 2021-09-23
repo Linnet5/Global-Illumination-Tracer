@@ -1,16 +1,15 @@
 #pragma once
-#include "Vertex.h"
+#include "Vec3.h"
 #include "Triangle.h"
 #include "ColorDbl.h"
 class Ray
 {
-private:
-	Vertex start;
-	Vertex end;
+public:
+	Vec3 start;
+	Vec3 end;
 	Triangle* endPointTriangle;
 	ColorDbl color;
-public:
-	Ray(const Vertex& inStart, const Vertex& inEnd, ColorDbl inColor);
+	Ray(const Vec3& inStart, const Vec3& inEnd, ColorDbl inColor);
 	void setTriangle(Triangle* triangle);
 };
 

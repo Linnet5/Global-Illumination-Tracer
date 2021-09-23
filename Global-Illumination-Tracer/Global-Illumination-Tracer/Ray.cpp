@@ -1,6 +1,6 @@
 #include "Ray.h"
 
-Ray::Ray(const Vertex& inStart, const Vertex& inEnd, ColorDbl inColor) {
+Ray::Ray(const Vec3& inStart, const Vec3& inEnd, ColorDbl inColor) {
 	start = inStart;
 	end = inEnd;
 	color = inColor;

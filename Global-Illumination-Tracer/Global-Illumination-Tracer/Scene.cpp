@@ -1,7 +1,7 @@
 #include "Scene.h"
 
 Scene::Scene() {
-	//Hardcoded room.
+	//--Hardcoded room.--//
 
 	//Tak
 	room[0] = Triangle(vertexList[1], vertexList[2], vertexList[0], ColorDbl(200, 200, 200));

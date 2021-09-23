@@ -8,9 +8,9 @@
 class Camera
 {
 	public:
-		Vertex eye0, eye1;
+		Vertex eye0, eye1, eye2;
 		int eyeSwitch = 0;
-		//int resolution = 800;
+		Pixel pixels;
 
 		int cols = 800;
 		std::vector<std::vector<Pixel> > pixelArray; 
@@ -20,5 +20,8 @@ class Camera
 
 		Camera();
 		void render();
+		void truncate(BMP& image, const double maxR, const double maxG, const double maxB);
+		
+		//void createImage(Pixel pixels[800][800], double maxR, double maxG, double maxB);
 };
 
