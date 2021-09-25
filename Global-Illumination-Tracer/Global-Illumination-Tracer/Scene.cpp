@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "Tetrahedron.h"
 
 Scene::Scene() {
 	//--Hardcoded room.--//
@@ -43,5 +44,7 @@ Scene::Scene() {
 	room[22] = Triangle(vertexList[6], vertexList[13], vertexList[8], ColorDbl(255, 0, 255));
 	room[23] = Triangle(vertexList[6], vertexList[8], vertexList[1], ColorDbl(255, 0, 255));
 
-
+	
+	//List of all objects in the scene
+	objects[0] = new Tetrahedron();
 }

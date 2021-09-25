@@ -17,28 +17,39 @@ void Camera::render() {
 
 	for (int i = 0; i < 800; i++) {
 		for (int j = 0; j < 800; j++) {
-			Vec3 pixelposition = Vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
+			Vec3 pixelPosition = Vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
 			Ray renderRay = Ray(eye1.getCords(), dummy, ColorDbl(Vec3(0, 0, 0)));
 			//Vec3 temp = pixelposition - renderRay.start;
 			//std::cout << temp.x() << " " << temp.y() << " " << temp.z() << std::endl;
-			for (int tri = 0; tri < 24; tri++) {
-				//can be improved by letting you switch eye
-				if (scene.room[tri].mollerTrumbore(renderRay.start, pixelposition - renderRay.start, renderRay.end)) {	
-					renderRay.endPointTriangle = &scene.room[tri];
-					pixels[i, j]->setRay(&renderRay);
+			bool touchedObj = false;
+			for (int obj = 0; obj < 1; obj++) {
+				if (scene.objects[obj]->renderFunction(renderRay, pixelPosition)) {
+				touchedObj = true;
+				}
+			}
+
+			//Only render room for the pixels that are not already filled with object pixels
+			if (!touchedObj) {
+				for (int tri = 0; tri < 24; tri++) {
+					//can be improved by letting you switch eye
+					if (scene.room[tri].mollerTrumbore(renderRay.start, pixelPosition - renderRay.start, renderRay.end)) {
+						renderRay.endPointTriangle = &scene.room[tri];
+					}
+				}
+			}
+				pixels[i, j]->setRay(&renderRay);
+				if (pixels[i, j]->refRay->endPointTriangle != nullptr) {
 					pixels[i, j]->setColor(ColorDbl(pixels[i, j]->refRay->endPointTriangle->color.GetValues().x(), pixels[i, j]->refRay->endPointTriangle->color.GetValues().y(), pixels[i, j]->refRay->endPointTriangle->color.GetValues().z()));
 
 					//Fetches max color value in the scene for each color channel
-					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().x() > maxR) 
+					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().x() > maxR)
 						maxR = pixels[i, j]->refRay->endPointTriangle->color.GetValues().x();
-					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().y() > maxG) 
+					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().y() > maxG)
 						maxG = pixels[i, j]->refRay->endPointTriangle->color.GetValues().y();
-					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().z() > maxB) 
+					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().z() > maxB)
 						maxB = pixels[i, j]->refRay->endPointTriangle->color.GetValues().z();
-
-					
-				}
 			}
+
 			//Fills the out image with the values of the pixels array
 			outImage(i, j)->Red = pixels[i, j]->color.GetValues().x();
 			outImage(i, j)->Green = pixels[i, j]->color.GetValues().y();
