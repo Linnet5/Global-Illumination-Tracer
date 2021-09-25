@@ -65,6 +65,43 @@ void Camera::render() {
 	delete[] pixels;
 }
 
+Vec3 Camera::renderEquation(Vec3 start, Vec3 direction, Ray oldRay) {
+	Ray renderRay = Ray(start, direction, Vec3(0, 0, 0));
+	bool touchedObj = false;
+	bool lightSourceTouched = false;
+	Vec3 Radiance;
+	for (int obj = 0; obj < 1; obj++) {
+		if (scene.objects[obj]->renderFunction(renderRay, direction)) {
+			touchedObj = true;
+		}
+	}
+
+	//Only render room for the pixels that are not already filled with object pixels
+	if (!touchedObj) {
+		for (int tri = 0; tri < 24; tri++) {
+			//can be improved by letting you switch eye
+			if (scene.room[tri].mollerTrumbore(renderRay.start, direction - renderRay.start, renderRay.end)) {
+				if (tri == 3) {
+					lightSourceTouched = true;
+				}
+				renderRay.endPointTriangle = &scene.room[tri];
+			}
+		}
+	}
+	//int angleOut = angleIn(renderRay.endPointTriangle);
+	//Vec3 newDirection = någonFunktionSomCalcarUtifrånVinkeln(angleout)
+	//all disepation coditions
+	if (!lightSourceTouched) {  
+		//Radiance = renderEquation(renderRay.end, newDirection, renderRay);
+	}
+	else {
+		Vec3 radiance = Vec3(1.0, 1.0, 1.0); //eller vad L0 är
+	}
+	//Vec3 newRadiance = radiance * functionSomGörF(angle, oldRay.endPointTriangle) /*tror vi behöver oldray för att veta vart strålen är påväg här*/ + functionSomRäknarShadowRay(oldRay.endPointTriangle);
+	//return newRadiance;
+	return Vec3(0, 0, 0);
+}
+
 void Camera::truncate(BMP& image, const double maxR, const double maxG, const double maxB)
 {
 	for (int i = 0; i < 800; i++) {
