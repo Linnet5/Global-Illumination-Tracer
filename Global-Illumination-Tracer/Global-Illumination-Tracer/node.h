@@ -1,16 +1,17 @@
 #pragma once
+#include "Ray.h"
 
 // Define a node of the tree
-template <typename Comparable>
-struct BinarySearchTree<Comparable>::Node {
-    Comparable element;
+template <typename Ray>
+struct BinaryTree<Ray>::Node {
+    Ray element;
 
     Node* left;    // pointer to left sub-tree
     Node* right;   // pointer to right sub-tree
     Node* parent;   // pointer to the parent of the node
 
     // Constructors
-    Node(const Comparable& theElement, Node* lt = nullptr, Node* rt = nullptr, Node* pt = nullptr)
+    Node(const Ray& theElement, Node* lt = nullptr, Node* rt = nullptr, Node* pt = nullptr)
         : element{ theElement }, left{ lt }, right{ rt }, parent{ pt } {
         ++count_nodes;
     }
@@ -31,5 +32,5 @@ struct BinarySearchTree<Comparable>::Node {
 };
 
 // Initialize static data member
-template <typename Comparable>
-int BinarySearchTree<Comparable>::Node::count_nodes = 0;
+template <typename Ray>
+int BinaryTree<Ray>::Node::count_nodes = 0;

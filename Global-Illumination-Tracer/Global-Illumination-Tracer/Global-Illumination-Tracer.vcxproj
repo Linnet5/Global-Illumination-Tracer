@@ -139,7 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BinarySearchTree.h" />
+    <ClInclude Include="BinaryTree.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ColorDbl.h" />
     <ClInclude Include="Direction.h" />
@@ -148,11 +148,11 @@
     <ClInclude Include="EasyBMP_BMP.h" />
     <ClInclude Include="EasyBMP_DataStructures.h" />
     <ClInclude Include="EasyBMP_VariousBMPutilities.h" />
-    <ClInclude Include="iterator.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Tetrahedron.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="Vertex.h" />
@@ -166,6 +166,7 @@
     <ClCompile Include="Pixel.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Tetrahedron.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Vec3.cpp" />
     <ClCompile Include="Vertex.cpp" />
