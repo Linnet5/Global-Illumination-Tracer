@@ -21,7 +21,7 @@ class Camera
 		Camera();
 		void render();
 		void truncate(BMP& image, const double maxR, const double maxG, const double maxB);
-		Vec3 renderEquation(Vec3 start, Vec3 direction, Ray oldRay);
+		Vec3 renderEquation(Vec3 start, Vec3 direction);
 		
 		//void createImage(Pixel pixels[800][800], double maxR, double maxG, double maxB);
 };

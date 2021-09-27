@@ -65,11 +65,11 @@ void Camera::render() {
 	delete[] pixels;
 }
 
-Vec3 Camera::renderEquation(Vec3 start, Vec3 direction, Ray oldRay) {
+Vec3 Camera::renderEquation(Vec3 start, Vec3 direction) {
 	Ray renderRay = Ray(start, direction, Vec3(0, 0, 0));
 	bool touchedObj = false;
 	bool lightSourceTouched = false;
-	Vec3 Radiance;
+	Vec3 radiance;
 	for (int obj = 0; obj < 1; obj++) {
 		if (scene.objects[obj]->renderFunction(renderRay, direction)) {
 			touchedObj = true;
@@ -88,18 +88,38 @@ Vec3 Camera::renderEquation(Vec3 start, Vec3 direction, Ray oldRay) {
 			}
 		}
 	}
-	//int angleOut = angleIn(renderRay.endPointTriangle);
-	//Vec3 newDirection = någonFunktionSomCalcarUtifrånVinkeln(angleout)
-	//all disepation coditions
-	if (!lightSourceTouched) {  
-		//Radiance = renderEquation(renderRay.end, newDirection, renderRay);
+	
+	const int nSamples = 1;
+	for (int i = 0; i < nSamples; i++) {
+		//rand rand1();
+		//rand rand2();  Values between 0 and 1 so ex: 0.04, 0.67 etc
+		//rand rand3();
+
+		//double theta = M_PI * rand1 / 2;
+		//float azimuth = 2 * M_PI * rand2;
+
+		//Vec3 newDirection  = renderRay.endPointTriangle."HUR VI RÄKNAR NU NORMALEN";
+		// newDirection = glm::rotate(inclination); kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
+		// newDirection = glm::rotate(azimuth);
+
+		//radianceCoeficence = M_PI * endPointTrianlge.lambertianReflectance * cos(incline) * sin(incline);
+
+		//all disepation coditions
+		if (!lightSourceTouched /* || (1 - endPointTrianlge.lambertianReflectance) < rand3 */) {
+			//radiance = renderEquation(renderRay.end, newDirection, renderRay);
+		}
+		else if (lightSourceTouched) {
+			radiance = Vec3(1.0, 1.0, 1.0); //eller vad L0 är
+		}
+
+		//Vec3 newRadiance = radiance * radianceCoeficence  + functionSomRäknarShadowRay(renderRay.start); //kanske problem att den klagar på radiance inte har värde för alla decs av readiance är i if satser.
+		//return newRadiance;
+		return Vec3(0, 0, 0);
+
 	}
-	else {
-		Vec3 radiance = Vec3(1.0, 1.0, 1.0); //eller vad L0 är
-	}
-	//Vec3 newRadiance = radiance * functionSomGörF(angle, oldRay.endPointTriangle) /*tror vi behöver oldray för att veta vart strålen är påväg här*/ + functionSomRäknarShadowRay(oldRay.endPointTriangle);
-	//return newRadiance;
-	return Vec3(0, 0, 0);
+
+	
+	
 }
 
 void Camera::truncate(BMP& image, const double maxR, const double maxG, const double maxB)
