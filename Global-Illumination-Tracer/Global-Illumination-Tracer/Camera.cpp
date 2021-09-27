@@ -102,7 +102,7 @@ Vec3 Camera::renderEquation(Vec3 start, Vec3 direction) {
 		// newDirection = glm::rotate(inclination); kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
 		// newDirection = glm::rotate(azimuth);
 
-		//radianceCoeficence = M_PI * endPointTrianlge.lambertianReflectance * cos(incline) * sin(incline);
+		//radianceCoeficence = (M_PI * endPointTrianlge.lambertianReflectance * cos(incline) * sin(incline))/( 1 - endPointTrianlge.lambertianReflectance);
 
 		//all disepation coditions
 		if (!lightSourceTouched /* || (1 - endPointTrianlge.lambertianReflectance) < rand3 */) {
