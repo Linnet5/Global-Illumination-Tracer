@@ -97,21 +97,22 @@ Vec3 Camera::renderEquation(Vec3 start, Vec3 direction) {
 	
 	const int nSamples = 1;
 	for (int i = 0; i < nSamples; i++) {
-		//rand rand1();
-		//rand rand2();  Values between 0 and 1 so ex: 0.04, 0.67 etc
-		//rand rand3();
+		double rand1 = dis(gen);
+		double rand2 = dis(gen);
+		double rand3 = dis(gen);
 
-		//double theta = M_PI * rand1 / 2;
-		//float azimuth = 2 * M_PI * rand2;
+		double theta = (pi * rand1) / 2;
+		double azimuth = 2 * pi * rand2;
 
-		//Vec3 newDirection  = renderRay.endPointTriangle."HUR VI RÄKNAR NU NORMALEN";
-		// newDirection = glm::rotate(inclination); kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
-		// newDirection = glm::rotate(azimuth);
-
-		//radianceCoeficence = (M_PI * endPointTrianlge.lambertianReflectance * cos(incline) * sin(incline))/( 1 - endPointTrianlge.lambertianReflectance);
-
+		
 		//all disepation coditions
 		if (!lightSourceTouched /* || (1 - endPointTrianlge.lambertianReflectance) < rand3 */) {
+			//Vec3 newDirection  = renderRay.endPointTriangle."HUR VI RÄKNAR NU NORMALEN";
+			//newDirection = glm::rotate(inclination); kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
+			//newDirection = glm::rotate(azimuth);
+
+			//radianceCoeficence = (M_PI * endPointTrianlge.lambertianReflectance * cos(incline) * sin(incline))/( 1 - endPointTrianlge.lambertianReflectance);
+
 			//radiance = renderEquation(renderRay.end, newDirection, renderRay);
 		}
 		else if (lightSourceTouched) {
