@@ -5,6 +5,7 @@
 #include <vector>
 #include "Scene.h"
 #include "EasyBMP.h"
+#include <random>
 class Camera
 {
 	public:
@@ -15,6 +16,10 @@ class Camera
 		int cols = 800;
 		std::vector<std::vector<Pixel> > pixelArray; 
 		Scene scene;
+
+		std::random_device rd;
+		std::mt19937 gen;
+		std::uniform_real_distribution<double> dis;
 
 		//Pixel pixelArray = new Pixel [800][800];
 

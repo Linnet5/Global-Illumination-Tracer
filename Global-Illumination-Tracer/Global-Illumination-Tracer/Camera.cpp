@@ -15,6 +15,12 @@ void Camera::render() {
 	BMP outImage;
 	outImage.SetSize(800, 800);
 
+	gen = std::mt19937(rd());
+	dis = std::uniform_real_distribution<double>(0, 1);
+
+	std::cout << dis(gen);
+
+
 	for (int i = 0; i < 800; i++) {
 		for (int j = 0; j < 800; j++) {
 			Vec3 pixelPosition = Vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
