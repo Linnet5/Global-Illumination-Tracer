@@ -18,7 +18,6 @@ void Camera::render() {
 	gen = std::mt19937(rd());
 	dis = std::uniform_real_distribution<double>(0, 1);
 
-	std::cout << dis(gen);
 
 
 	for (int i = 0; i < 800; i++) {
@@ -117,6 +116,9 @@ Vec3 Camera::renderEquation(Vec3 start, Vec3 direction) {
 		}
 		else if (lightSourceTouched) {
 			radiance = Vec3(1.0, 1.0, 1.0); //eller vad L0 är
+		}
+		else {
+			radiance = Vec3(0.0, 0.0, 0.0);
 		}
 
 		//Vec3 newRadiance = radiance * radianceCoeficence  + functionSomRäknarShadowRay(renderRay.start); //kanske problem att den klagar på radiance inte har värde för alla decs av readiance är i if satser.
