@@ -1,6 +1,7 @@
 #include "Ray.h"
 
-Ray::Ray(const Vec3& inStart, const Vec3& inEnd, ColorDbl inColor) {
+Ray::Ray(const glm::vec3& inStart, const glm::vec3& inEnd, ColorDbl inColor)
+{
 	start = inStart;
 	end = inEnd;
 	color = inColor;

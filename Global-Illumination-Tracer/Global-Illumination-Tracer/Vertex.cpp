@@ -2,14 +2,14 @@
 
 //Def constructor
 Vertex::Vertex() {
-	cords = Vec3(0, 0, 0);
+	cords = glm::vec3(0, 0, 0);
 }
 
 Vertex::Vertex(double inX, double inY, double inZ){
-	cords = Vec3(inX, inY, inZ);
+	cords = glm::vec3(inX, inY, inZ);
 }
 
-Vertex::Vertex(Vec3 inVec){
+Vertex::Vertex(glm::vec3 inVec){
 	cords = inVec;
 }
 
@@ -24,19 +24,19 @@ Vertex Vertex::operator-(Vertex& other) {
 	return temp;
 }
 
-Vec3 Vertex::getCords() {
+glm::vec3 Vertex::getCords() {
 	return cords;
 }
 
 double Vertex::getX() {
-	return cords.x();
+	return cords.x;
 }
 
 double Vertex::getY() {
-	return cords.y();
+	return cords.y;
 }
 
 double Vertex::getZ() {
-	return cords.z();
+	return cords.z;
 }
 

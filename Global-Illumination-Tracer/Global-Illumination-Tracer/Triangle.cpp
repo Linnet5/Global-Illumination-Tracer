@@ -20,8 +20,8 @@ Direction Triangle::calculateNormal(){
 	
 	 Vertex u = v1 - v0; 
 	 Vertex v = v2 - v0;
-	 Vec3 temp;
-	 return (Direction (temp.cross(u.getCords(),v.getCords())));
+	 glm::vec3 temp;
+	 return (Direction (glm::cross(u.getCords(),v.getCords())));
 	 /*
 	 double tempUx = u.getX();
 	 double tempUy = u.getY();
@@ -34,28 +34,29 @@ Direction Triangle::calculateNormal(){
 	 return temp; */
 }
 
-bool Triangle::mollerTrumbore(Vec3 rayOrigin, Vec3 rayDirection, Vec3& intersectionPoint) {
+bool Triangle::mollerTrumbore(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3& intersectionPoint) {
 	const double EPSILON = 0.0000001;
-	Vec3 edge1, edge2, P, T, Q;
-	double a, f, u, v, t;
+	glm::vec3 edge1, edge2, P, T, Q;
+	double a, f, u, v;
+	float t;
 
 	edge1 = v1.getCords() - v0.getCords();
 	edge2 = v2.getCords() - v0.getCords();
 
-	P = P.cross(rayDirection, edge2); // behövs = ? kan vara fel källa :)
-	a = edge1.dot(edge1, P);
+	P = glm::cross(rayDirection, edge2); // behövs = ? kan vara fel källa :)
+	a = glm::dot(edge1, P);
 	if (a > -EPSILON && a < EPSILON) return false; //parallel
 
 	f = 1.0 / a;
 	T = rayOrigin - v0.getCords();
-	u = f * T.dot(T, P);
+	u = f * glm::dot(T, P);
 	if (u < 0.0 || u > 1.0) return false; //utanför triangel enligt barycentric cords
 
-	Q = Q.cross(T, edge1);
-	v = f * rayDirection.dot(rayDirection, Q);
+	Q = glm::cross(T, edge1);
+	v = f * glm::dot(rayDirection, Q);
 	if (v < 0.0 || u + v > 1.0) return false; //utanför triangel enligt barycentric cords
 
-	t = f * edge2.dot(edge2, Q);
+	t = f * glm::dot(edge2, Q);
 	if (t > EPSILON) {
 		intersectionPoint = rayOrigin + rayDirection * t;
 		return true;

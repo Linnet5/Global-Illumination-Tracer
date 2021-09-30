@@ -1,4 +1,5 @@
 #include "Tetrahedron.h"
+#include <iostream>
 
 Tetrahedron::Tetrahedron() {
 	sides[0] = Triangle(vertexList[0], vertexList[2], vertexList[1], ColorDbl(227, 242, 160));
@@ -7,13 +8,13 @@ Tetrahedron::Tetrahedron() {
 	sides[3] = Triangle(vertexList[1], vertexList[2], vertexList[3], ColorDbl(227 * 0.4, 242 * 0.4, 160 * 0.4));
 }
 
-bool Tetrahedron::renderFunction (Ray& renderRay, Vec3 direction)
+bool Tetrahedron::renderFunction (Ray& renderRay, glm::vec3 direction)
 {
-	Vec3 t = Vec3(999, 999, 999);
+	glm::vec3 t = glm::vec3(999, 999, 999);
 	bool flag = false;
 	for (int tri = 0; tri < 4; tri++) {
 		if(sides[tri].mollerTrumbore(renderRay.start, direction - renderRay.start, renderRay.end)){
-			if((renderRay.end).length() < t.length()){
+			if(glm::length(renderRay.end) < glm::length(t)){
 				renderRay.endPointTriangle = &sides[tri];
 				t = renderRay.end;
 				flag = true;

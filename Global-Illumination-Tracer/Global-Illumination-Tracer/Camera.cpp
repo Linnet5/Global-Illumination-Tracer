@@ -1,14 +1,14 @@
 #include "Camera.h"
 
 Camera::Camera() {
-	eye0 = Vec3(-2, 0, 0);
-	eye1 = Vec3(-1, 0, 0);
-	eye2 = Vec3(0, 0, 0);
+	eye0 = glm::vec3(-2, 0, 0);
+	eye1 = glm::vec3(-1, 0, 0);
+	eye2 = glm::vec3(0, 0, 0);
 }
 
 void Camera::render() {
 	
-	Vec3 dummy = Vec3(0, 0, 0);
+	glm::vec3 dummy = glm::vec3(0, 0, 0);
 
 	auto pixels = new Pixel[800][800];
 	double maxR = 0, maxG = 0, maxB = 0;
@@ -22,8 +22,8 @@ void Camera::render() {
 
 	for (int i = 0; i < 800; i++) {
 		for (int j = 0; j < 800; j++) {
-			Vec3 pixelPosition = Vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
-			Ray renderRay = Ray(eye1.getCords(), dummy, ColorDbl(Vec3(0, 0, 0)));
+			glm::vec3 pixelPosition = glm::vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
+			Ray renderRay = Ray(eye1.getCords(), dummy, ColorDbl(glm::vec3(0, 0, 0)));
 			//Vec3 temp = pixelposition - renderRay.start;
 			//std::cout << temp.x() << " " << temp.y() << " " << temp.z() << std::endl;
 			bool touchedObj = false;
@@ -44,21 +44,21 @@ void Camera::render() {
 			}
 				pixels[i, j]->setRay(&renderRay);
 				if (pixels[i, j]->refRay->endPointTriangle != nullptr) {
-					pixels[i, j]->setColor(ColorDbl(pixels[i, j]->refRay->endPointTriangle->color.GetValues().x(), pixels[i, j]->refRay->endPointTriangle->color.GetValues().y(), pixels[i, j]->refRay->endPointTriangle->color.GetValues().z()));
+					pixels[i, j]->setColor(ColorDbl(pixels[i, j]->refRay->endPointTriangle->color.GetValues().x, pixels[i, j]->refRay->endPointTriangle->color.GetValues().y, pixels[i, j]->refRay->endPointTriangle->color.GetValues().z));
 
 					//Fetches max color value in the scene for each color channel
-					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().x() > maxR)
-						maxR = pixels[i, j]->refRay->endPointTriangle->color.GetValues().x();
-					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().y() > maxG)
-						maxG = pixels[i, j]->refRay->endPointTriangle->color.GetValues().y();
-					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().z() > maxB)
-						maxB = pixels[i, j]->refRay->endPointTriangle->color.GetValues().z();
+					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().x > maxR)
+						maxR = pixels[i, j]->refRay->endPointTriangle->color.GetValues().x;
+					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().y > maxG)
+						maxG = pixels[i, j]->refRay->endPointTriangle->color.GetValues().y;
+					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().z > maxB)
+						maxB = pixels[i, j]->refRay->endPointTriangle->color.GetValues().z;
 			}
 
 			//Fills the out image with the values of the pixels array
-			outImage(i, j)->Red = pixels[i, j]->color.GetValues().x();
-			outImage(i, j)->Green = pixels[i, j]->color.GetValues().y();
-			outImage(i, j)->Blue = pixels[i, j]->color.GetValues().z();
+			outImage(i, j)->Red = pixels[i, j]->color.GetValues().x;
+			outImage(i, j)->Green = pixels[i, j]->color.GetValues().y;
+			outImage(i, j)->Blue = pixels[i, j]->color.GetValues().z;
 			outImage(i, j)->Alpha = 1;
 		}
 	}
@@ -70,11 +70,11 @@ void Camera::render() {
 	delete[] pixels;
 }
 
-Vec3 Camera::renderEquation(Vec3 start, Vec3 direction) {
-	Ray renderRay = Ray(start, direction, Vec3(0, 0, 0));
+glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
+	Ray renderRay = Ray(start, direction, glm::vec3(0, 0, 0));
 	bool touchedObj = false;
 	bool lightSourceTouched = false;
-	Vec3 radiance;
+	glm::vec3 radiance;
 	for (int obj = 0; obj < 1; obj++) {
 		if (scene.objects[obj]->renderFunction(renderRay, direction)) {
 			touchedObj = true;
@@ -115,10 +115,10 @@ Vec3 Camera::renderEquation(Vec3 start, Vec3 direction) {
 			//radiance = renderEquation(renderRay.end, newDirection, renderRay);
 		}
 		else if (lightSourceTouched) {
-			radiance = Vec3(1.0, 1.0, 1.0); //eller vad L0 är
+			radiance = glm::vec3(1.0, 1.0, 1.0); //eller vad L0 är
 		}
 		else {
-			radiance = Vec3(0.0, 0.0, 0.0);
+			radiance = glm::vec3(0.0, 0.0, 0.0);
 		}
 
 		//Vec3 newRadiance = radiance * radianceCoeficence  + functionSomRäknarShadowRay(renderRay.start); //kanske problem att den klagar på radiance inte har värde för alla decs av readiance är i if satser.
@@ -127,7 +127,7 @@ Vec3 Camera::renderEquation(Vec3 start, Vec3 direction) {
 
 	}
 
-	return Vec3(0, 0, 0);
+	return glm::vec3(0, 0, 0);
 	
 }
 

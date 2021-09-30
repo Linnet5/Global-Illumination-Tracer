@@ -4,6 +4,6 @@
 class Shapes
 {
 public:
-	virtual bool renderFunction(Ray& renderRay, Vec3 direction) = 0;
+	virtual bool renderFunction(Ray& renderRay, glm::vec3 direction) = 0;
 };
 
