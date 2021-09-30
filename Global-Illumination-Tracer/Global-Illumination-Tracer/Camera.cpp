@@ -121,11 +121,11 @@ Vec3 Camera::renderEquation(Vec3 start, Vec3 direction) {
 
 		//Vec3 newRadiance = radiance * radianceCoeficence  + functionSomRäknarShadowRay(renderRay.start); //kanske problem att den klagar på radiance inte har värde för alla decs av readiance är i if satser.
 		//return newRadiance;
-		return Vec3(0, 0, 0);
+		
 
 	}
 
-	
+	return Vec3(0, 0, 0);
 	
 }
 

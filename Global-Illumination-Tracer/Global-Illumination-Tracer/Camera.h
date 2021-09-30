@@ -6,6 +6,7 @@
 #include "Scene.h"
 #include "EasyBMP.h"
 #include <random>
+
 class Camera
 {
 	public:
@@ -20,6 +21,7 @@ class Camera
 		std::random_device rd;
 		std::mt19937 gen;
 		std::uniform_real_distribution<double> dis;
+		const double pi = 3.14159265358979323846;
 
 		//Pixel pixelArray = new Pixel [800][800];
 
