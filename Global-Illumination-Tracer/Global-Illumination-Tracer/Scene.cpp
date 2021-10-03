@@ -10,7 +10,7 @@ Scene::Scene() {
 	room[2] = Triangle(vertexList[3], vertexList[4], vertexList[0], ColorDbl(200, 200, 200));
 	room[3] = Triangle(vertexList[4], vertexList[5], vertexList[0], ColorDbl(200, 200, 200));
 	room[4] = Triangle(vertexList[5], vertexList[6], vertexList[0], ColorDbl(200, 200, 200));
-	room[5] = Triangle(vertexList[6], vertexList[1], vertexList[0], ColorDbl(200, 200, 200));
+	room[5] = Triangle(vertexList[6], vertexList[1], vertexList[0], ColorDbl(200, 200, 200)); //LightSource inuti denna triangle
 
 	//Golv
 	room[6] = Triangle(vertexList[8], vertexList[7], vertexList[9], ColorDbl(200, 200, 200));
@@ -44,7 +44,10 @@ Scene::Scene() {
 	room[22] = Triangle(vertexList[6], vertexList[13], vertexList[8], ColorDbl(255, 0, 255));
 	room[23] = Triangle(vertexList[6], vertexList[8], vertexList[1], ColorDbl(255, 0, 255));
 
-	
+	//Lightsource
+	lightSource[0] = Triangle(lightVertex[0], lightVertex[1], lightVertex[2], ColorDbl(255, 255, 255));
+	lightSource[1] = Triangle(lightVertex[3], lightVertex[2], lightVertex[1], ColorDbl(255, 255, 255));
+
 	//List of all objects in the scene
 	objects[0] = new Tetrahedron();
 }

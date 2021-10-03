@@ -16,12 +16,12 @@ Triangle::Triangle(Vertex inV0, Vertex inV1, Vertex inV2, ColorDbl inColor) {
 }
 
 
-Direction Triangle::calculateNormal(){
+glm::vec3 Triangle::calculateNormal(){
 	
 	 Vertex u = v1 - v0; 
 	 Vertex v = v2 - v0;
 	 glm::vec3 temp;
-	 return (Direction (glm::cross(u.getCords(),v.getCords())));
+	 return glm::cross(u.getCords(),v.getCords());
 	 /*
 	 double tempUx = u.getX();
 	 double tempUy = u.getY();

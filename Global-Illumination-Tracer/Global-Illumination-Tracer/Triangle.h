@@ -11,17 +11,18 @@ private:
 	Vertex v1;
 	Vertex v2;
 
-	Direction dir;
+	glm::vec3 dir;
 
-	//Functions
-	Direction calculateNormal();
+	
 
 
 public:
+	const float reflectance = 0.18;
 	ColorDbl color;
 	Triangle();
 	Triangle(Vertex inV0, Vertex inV1, Vertex inV2, ColorDbl inColor);
 	bool mollerTrumbore(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3& intersectionPoint);
+	glm::vec3 calculateNormal();
 };
 
 

@@ -2,7 +2,7 @@
 
 Camera::Camera() {
 	eye0 = glm::vec3(-2, 0, 0);
-	eye1 = glm::vec3(-1, 0, 0);
+	eye1 = glm::vec3(-1, -0.5, 0);
 	eye2 = glm::vec3(0, 0, 0);
 }
 
@@ -39,6 +39,13 @@ void Camera::render() {
 					//can be improved by letting you switch eye
 					if (scene.room[tri].mollerTrumbore(renderRay.start, pixelPosition - renderRay.start, renderRay.end)) {
 						renderRay.endPointTriangle = &scene.room[tri];
+						if (tri == 5) {
+							for (int i = 0; i < 2; i++) {
+								if (scene.lightSource[i].mollerTrumbore(renderRay.start, pixelPosition - renderRay.start, renderRay.end)) {
+									renderRay.endPointTriangle = &scene.lightSource[i];
+								}
+							}
+						}
 					}
 				}
 			}
@@ -70,7 +77,7 @@ void Camera::render() {
 	delete[] pixels;
 }
 
-glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
+glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRay) {
 	Ray renderRay = Ray(start, direction, glm::vec3(0, 0, 0));
 	bool touchedObj = false;
 	bool lightSourceTouched = false;
@@ -86,33 +93,46 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 		for (int tri = 0; tri < 24; tri++) {
 			//can be improved by letting you switch eye
 			if (scene.room[tri].mollerTrumbore(renderRay.start, direction - renderRay.start, renderRay.end)) {
-				if (tri == 3) {
-					lightSourceTouched = true;
-				}
 				renderRay.endPointTriangle = &scene.room[tri];
+				if (tri == 5) {
+					for (int i = 0; i < 2; i++) {
+						if (scene.lightSource[i].mollerTrumbore(renderRay.start, direction - renderRay.start, renderRay.end)) {
+							renderRay.endPointTriangle = &scene.lightSource[i];
+							lightSourceTouched = true;
+						}
+					}
+				}
+				
 			}
 		}
 	}
 	
+	glm::vec3 albedo = renderRay.endPointTriangle->color.GetValues() * renderRay.endPointTriangle->reflectance;
 	const int nSamples = 1;
 	for (int i = 0; i < nSamples; i++) {
 		double rand1 = dis(gen);
 		double rand2 = dis(gen);
 		double rand3 = dis(gen);
 
-		double theta = (pi * rand1) / 2;
-		double azimuth = 2 * pi * rand2;
+		float theta = (pi * rand1) / 2;
+		float azimuth = 2 * pi * rand2;
+
 
 		
 		//all disepation coditions
-		if (!lightSourceTouched /* || (1 - endPointTrianlge.lambertianReflectance) < rand3 */) {
-			//Vec3 newDirection  = renderRay.endPointTriangle."HUR VI RÄKNAR NU NORMALEN";
-			//newDirection = glm::rotate(inclination); kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
-			//newDirection = glm::rotate(azimuth);
+		if (!lightSourceTouched  || (1 - renderRay.endPointTriangle->reflectance) < rand3) {
+			glm::vec3 normal = renderRay.endPointTriangle->calculateNormal();
+			glm::vec3 outVec = normal;
 
-			//radianceCoeficence = (M_PI * endPointTrianlge.lambertianReflectance * cos(incline) * sin(incline))/( 1 - endPointTrianlge.lambertianReflectance);
+			glm::vec3 temp = normal + glm::vec3(1, 1, 1);
+			glm::vec3 tangent = glm::cross(normal, temp);
+			
+			//outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
+			//outVec = glm::rotate(outVec, azimuth, normal);
 
-			//radiance = renderEquation(renderRay.end, newDirection, renderRay);
+			glm::vec3 brdf = (pi * albedo * cos(theta) * sin(theta))/((renderRay.endPointTriangle->reflectance)*nSamples);
+
+			radiance = renderEquation(renderRay.end, outVec, renderRay);
 		}
 		else if (lightSourceTouched) {
 			radiance = glm::vec3(1.0, 1.0, 1.0); //eller vad L0 är
@@ -121,7 +141,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 			radiance = glm::vec3(0.0, 0.0, 0.0);
 		}
 
-		//Vec3 newRadiance = radiance * radianceCoeficence  + functionSomRäknarShadowRay(renderRay.start); //kanske problem att den klagar på radiance inte har värde för alla decs av readiance är i if satser.
+		//Vec3 newRadiance = radiance * brdf  + functionSomRäknarShadowRay(renderRay.start); //kanske problem att den klagar på radiance inte har värde för alla decs av readiance är i if satser.
 		//return newRadiance;
 		
 
