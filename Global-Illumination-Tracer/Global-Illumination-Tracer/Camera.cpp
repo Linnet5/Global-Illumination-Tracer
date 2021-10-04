@@ -1,5 +1,6 @@
 #include "Camera.h"
 
+int x = 0;
 Camera::Camera() {
 	eye0 = glm::vec3(-2, 0, 0);
 	eye1 = glm::vec3(-1, -0.5, 0);
@@ -20,6 +21,10 @@ void Camera::render() {
 
 	for (int i = 0; i < 800; i++) {
 		for (int j = 0; j < 800; j++) {
+			glm::vec3 pixelPosition = glm::vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
+			Ray renderRay = Ray(eye1, dummy, ColorDbl(glm::vec3(0, 0, 0)));
+
+			pixels[i, j]->setColor(renderEquation(eye1, pixelPosition - eye1, renderRay));
 			/* TEMPORÄRT UTKOMMENTERAD
 			glm::vec3 pixelPosition = glm::vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
 			Ray renderRay = Ray(eye1.getCords(), dummy, ColorDbl(glm::vec3(0, 0, 0)));
@@ -67,6 +72,19 @@ void Camera::render() {
 			outImage(i, j)->Blue = pixels[i, j]->color.GetValues().z;
 			outImage(i, j)->Alpha = 1;
 			*/
+
+			if (pixels[i, j]->color.GetValues().x > maxR)
+				maxR = pixels[i, j]->color.GetValues().x;
+			if (pixels[i, j]->color.GetValues().y > maxG)
+				maxG = pixels[i, j]->color.GetValues().y;
+			if (pixels[i, j]->color.GetValues().z > maxB)
+				maxB = pixels[i, j]->color.GetValues().z;
+			
+
+			outImage(i, j)->Red = pixels[i, j]->color.GetValues().x;
+			outImage(i, j)->Green = pixels[i, j]->color.GetValues().y;
+			outImage(i, j)->Blue = pixels[i, j]->color.GetValues().z;
+			outImage(i, j)->Alpha = 1;
 		}
 	}
 
@@ -81,6 +99,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 	Ray renderRay = Ray(start, direction, glm::vec3(0, 0, 0));
 	bool touchedObj = false;
 	bool lightSourceTouched = false;
+	glm::vec3 bdrf = glm::vec3(0, 0, 0);
 	glm::vec3 radiance;
 	for (int obj = 0; obj < 1; obj++) {
 		if (scene.objects[obj]->renderFunction(renderRay, direction)) {
@@ -92,11 +111,11 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 	if (!touchedObj) {
 		for (int tri = 0; tri < 24; tri++) {
 			//can be improved by letting you switch eye
-			if (scene.room[tri].mollerTrumbore(renderRay.start, direction - renderRay.start, renderRay.end)) {
+			if (scene.room[tri].mollerTrumbore(renderRay.start, direction, renderRay.end)) {
 				renderRay.endPointTriangle = &scene.room[tri];
 				if (tri == 5) {
 					for (int i = 0; i < 2; i++) {
-						if (scene.lightSource[i].mollerTrumbore(renderRay.start, direction - renderRay.start, renderRay.end)) {
+						if (scene.lightSource[i].mollerTrumbore(renderRay.start, direction, renderRay.end)) {
 							renderRay.endPointTriangle = &scene.lightSource[i];
 							lightSourceTouched = true;
 						}
@@ -105,7 +124,8 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 			}
 		}
 	}
-	
+	//std::cout << renderRay.end.x << " " << renderRay.end.y << " " << renderRay.end.z << " " << direction.x << " " << direction.y << " " << direction.z << std::endl;
+	x++;
 	glm::vec3 albedo = renderRay.endPointTriangle->color.GetValues() * renderRay.endPointTriangle->reflectance;
 	const int nSamples = 1;
 	for (int i = 0; i < nSamples; i++) {
@@ -113,13 +133,13 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 		float rand2 = dis(gen);
 		float rand3 = dis(gen);
 
-		float theta = (pi * rand1) / 2;
+		float theta = (pi * rand1) / 3;
 		float azimuth = 2 * pi * rand2;
-
+		//std::cout << theta << " " << azimuth <<std::endl;
 
 		
 		//all disepation coditions
-		if (!lightSourceTouched  || (1 - renderRay.endPointTriangle->reflectance) < rand3) {
+		if (!lightSourceTouched  && (1 - renderRay.endPointTriangle->reflectance) < rand3) {
 			glm::vec3 normal = renderRay.endPointTriangle->calculateNormal();
 			glm::vec3 outVec = normal;
 
@@ -129,9 +149,9 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 			outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
 			outVec = glm::rotate(outVec, azimuth, normal);
 
-			glm::vec3 brdf = (pi * albedo * cos(theta) * sin(theta))/((renderRay.endPointTriangle->reflectance)*nSamples);
+			glm::vec3 bdrf = (pi * albedo * cos(theta) * sin(theta))/((renderRay.endPointTriangle->reflectance)*nSamples);
 
-			radiance = renderEquation(renderRay.end, outVec, renderRay);
+			radiance = renderEquation(renderRay.end, normal, renderRay);
 		}
 		else if (lightSourceTouched) {
 			radiance = glm::vec3(1.0, 1.0, 1.0); //eller vad L0 är
@@ -140,8 +160,8 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 			radiance = glm::vec3(0.0, 0.0, 0.0);
 		}
 
-		//Vec3 newRadiance = radiance * brdf  + functionSomRäknarShadowRay(renderRay.start); //kanske problem att den klagar på radiance inte har värde för alla decs av readiance är i if satser.
-		//return newRadiance;
+		glm::vec3 newRadiance = radiance * bdrf; // +functionSomRäknarShadowRay(renderRay.start); //kanske problem att den klagar på radiance inte har värde för alla decs av readiance är i if satser.
+		return newRadiance;
 		
 
 	}

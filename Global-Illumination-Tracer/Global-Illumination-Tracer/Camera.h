@@ -12,7 +12,7 @@
 class Camera
 {
 	public:
-		Vertex eye0, eye1, eye2;
+		glm::vec3 eye0, eye1, eye2;
 		int eyeSwitch = 0;
 		Pixel pixels;
 
