@@ -22,14 +22,14 @@ class Camera
 		std::random_device rd;
 		std::mt19937 gen;
 		std::uniform_real_distribution<double> dis;
-		const double pi = 3.14159265358979323846;
+		const float pi = 3.14159265358979323846;
 
 		//Pixel pixelArray = new Pixel [800][800];
 
 		Camera();
 		void render();
 		void truncate(BMP& image, const double maxR, const double maxG, const double maxB);
-		glm::vec3 renderEquation(glm::vec3 start, glm::vec3 direction);
+		glm::vec3 renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRay);
 		
 		//void createImage(Pixel pixels[800][800], double maxR, double maxG, double maxB);
 };

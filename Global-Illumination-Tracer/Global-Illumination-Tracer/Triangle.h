@@ -17,7 +17,7 @@ private:
 
 
 public:
-	const float reflectance = 0.18;
+	float reflectance = 0.18; 
 	ColorDbl color;
 	Triangle();
 	Triangle(Vertex inV0, Vertex inV1, Vertex inV2, ColorDbl inColor);
