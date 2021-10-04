@@ -25,6 +25,17 @@ void Camera::render() {
 			Ray renderRay = Ray(eye1, dummy, ColorDbl(glm::vec3(0, 0, 0)));
 
 			pixels[i, j]->setColor(renderEquation(eye1, pixelPosition - eye1, renderRay));
+
+			/*
+			glm::vec3 tempColor = glm::vec3(0, 0, 0);
+			for (int a = 0; a < 5; a++) {
+				tempColor += renderEquation(eye1, pixelPosition - eye1, renderRay);
+			}
+			tempColor = tempColor / 5.0f;
+			pixels[i, j]->setColor(tempColor);
+			*/
+
+
 			/* TEMPORÄRT UTKOMMENTERAD
 			glm::vec3 pixelPosition = glm::vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
 			Ray renderRay = Ray(eye1.getCords(), dummy, ColorDbl(glm::vec3(0, 0, 0)));
@@ -126,46 +137,58 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 	}
 	//std::cout << renderRay.end.x << " " << renderRay.end.y << " " << renderRay.end.z << " " << direction.x << " " << direction.y << " " << direction.z << std::endl;
 	x++;
-	glm::vec3 albedo = renderRay.endPointTriangle->color.GetValues() * renderRay.endPointTriangle->reflectance;
-	const int nSamples = 1;
-	for (int i = 0; i < nSamples; i++) {
-		float rand1 = dis(gen);
-		float rand2 = dis(gen);
-		float rand3 = dis(gen);
 
-		float theta = (pi * rand1) / 3;
-		float azimuth = 2 * pi * rand2;
-		//std::cout << theta << " " << azimuth <<std::endl;
+	if (renderRay.endPointTriangle != nullptr) {
+		glm::vec3 albedo = renderRay.endPointTriangle->color.GetValues() * renderRay.endPointTriangle->reflectance;
+		albedo = glm::normalize(albedo);
+
+		const int nSamples = 1;
+		for (int i = 0; i < nSamples; i++) {
+			float rand1 = dis(gen);
+			float rand2 = dis(gen);
+			float rand3 = dis(gen);
+
+			float theta = (pi * rand1) / 3;
+			float azimuth = 2 * pi * rand2;
+			//std::cout << theta << " " << azimuth <<std::endl;
 
 		
-		//all disepation coditions
-		if (!lightSourceTouched  && (1 - renderRay.endPointTriangle->reflectance) < rand3) {
-			glm::vec3 normal = renderRay.endPointTriangle->calculateNormal();
-			glm::vec3 outVec = normal;
+			//all disepation coditions
+			if (!lightSourceTouched  && (1 - renderRay.endPointTriangle->reflectance) < rand3) {
+				glm::vec3 normal = renderRay.endPointTriangle->calculateNormal();
+				glm::vec3 outVec = normal;
 
-			glm::vec3 temp = normal + glm::vec3(1, 1, 1);
-			glm::vec3 tangent = glm::cross(normal, temp);
+				outVec.x = sin(theta) * cos(azimuth);
+				outVec.y = sin(theta) * sin(azimuth);
+				outVec.z = cos(theta);
+
+				/*
+				glm::vec3 temp = normal + glm::vec3(1, 1, 1);
+				glm::vec3 tangent = glm::cross(normal, temp);
+
+				//FIX???
+				if (glm::length(tangent) == 0)
+					tangent = normal;
 			
-			outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
-			outVec = glm::rotate(outVec, azimuth, normal);
+				outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
+				outVec = glm::rotate(outVec, azimuth, normal);
+				*/
 
-			glm::vec3 bdrf = (pi * albedo * cos(theta) * sin(theta))/((renderRay.endPointTriangle->reflectance)*nSamples);
+				glm::vec3 bdrf = (pi * albedo * cos(theta) * sin(theta))/((renderRay.endPointTriangle->reflectance)*nSamples);
 
-			radiance = renderEquation(renderRay.end, normal, renderRay);
+				radiance = renderEquation(renderRay.end, glm::normalize(outVec), renderRay);
+				glm::vec3 newRadiance = radiance * bdrf; // +functionSomRäknarShadowRay(renderRay.start); //kanske problem att den klagar på radiance inte har värde för alla decs av readiance är i if satser.
+
+				return newRadiance;
+			}
+			else if (lightSourceTouched) {
+				return glm::vec3(1.0, 1.0, 1.0); //eller vad L0 är
+			}
+			else {
+				return glm::vec3(0.0, 0.0, 0.0);
+			}
 		}
-		else if (lightSourceTouched) {
-			radiance = glm::vec3(1.0, 1.0, 1.0); //eller vad L0 är
-		}
-		else {
-			radiance = glm::vec3(0.0, 0.0, 0.0);
-		}
-
-		glm::vec3 newRadiance = radiance * bdrf; // +functionSomRäknarShadowRay(renderRay.start); //kanske problem att den klagar på radiance inte har värde för alla decs av readiance är i if satser.
-		return newRadiance;
-		
-
 	}
-
 	return glm::vec3(0, 0, 0);
 	
 }
