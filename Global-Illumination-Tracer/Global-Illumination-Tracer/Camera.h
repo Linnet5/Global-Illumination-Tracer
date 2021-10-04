@@ -7,6 +7,7 @@
 #include "EasyBMP.h"
 #include <random>
 #include "glm/glm.hpp"
+#include "glm/gtx/rotate_vector.hpp"
 
 class Camera
 {
@@ -21,7 +22,7 @@ class Camera
 
 		std::random_device rd;
 		std::mt19937 gen;
-		std::uniform_real_distribution<double> dis;
+		std::uniform_real_distribution<float> dis;
 		const float pi = 3.14159265358979323846;
 
 		//Pixel pixelArray = new Pixel [800][800];

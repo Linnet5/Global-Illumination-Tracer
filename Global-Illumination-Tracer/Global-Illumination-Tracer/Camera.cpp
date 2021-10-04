@@ -16,12 +16,11 @@ void Camera::render() {
 	outImage.SetSize(800, 800);
 
 	gen = std::mt19937(rd());
-	dis = std::uniform_real_distribution<double>(0, 1);
-
-
+	dis = std::uniform_real_distribution<float>(0, 1);
 
 	for (int i = 0; i < 800; i++) {
 		for (int j = 0; j < 800; j++) {
+			/* TEMPORÄRT UTKOMMENTERAD
 			glm::vec3 pixelPosition = glm::vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
 			Ray renderRay = Ray(eye1.getCords(), dummy, ColorDbl(glm::vec3(0, 0, 0)));
 			//Vec3 temp = pixelposition - renderRay.start;
@@ -67,6 +66,7 @@ void Camera::render() {
 			outImage(i, j)->Green = pixels[i, j]->color.GetValues().y;
 			outImage(i, j)->Blue = pixels[i, j]->color.GetValues().z;
 			outImage(i, j)->Alpha = 1;
+			*/
 		}
 	}
 
@@ -102,7 +102,6 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 						}
 					}
 				}
-				
 			}
 		}
 	}
@@ -110,9 +109,9 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 	glm::vec3 albedo = renderRay.endPointTriangle->color.GetValues() * renderRay.endPointTriangle->reflectance;
 	const int nSamples = 1;
 	for (int i = 0; i < nSamples; i++) {
-		double rand1 = dis(gen);
-		double rand2 = dis(gen);
-		double rand3 = dis(gen);
+		float rand1 = dis(gen);
+		float rand2 = dis(gen);
+		float rand3 = dis(gen);
 
 		float theta = (pi * rand1) / 2;
 		float azimuth = 2 * pi * rand2;
@@ -127,8 +126,8 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 			glm::vec3 temp = normal + glm::vec3(1, 1, 1);
 			glm::vec3 tangent = glm::cross(normal, temp);
 			
-			//outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
-			//outVec = glm::rotate(outVec, azimuth, normal);
+			outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
+			outVec = glm::rotate(outVec, azimuth, normal);
 
 			glm::vec3 brdf = (pi * albedo * cos(theta) * sin(theta))/((renderRay.endPointTriangle->reflectance)*nSamples);
 
