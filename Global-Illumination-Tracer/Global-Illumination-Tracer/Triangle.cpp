@@ -35,7 +35,7 @@ glm::vec3 Triangle::calculateNormal(){
 }
 
 bool Triangle::mollerTrumbore(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3& intersectionPoint) {
-	const double EPSILON = 0.0000001;
+	const double EPSILON = 0.000000001;
 	glm::vec3 edge1, edge2, P, T, Q;
 	double a, f, u, v;
 	float t;

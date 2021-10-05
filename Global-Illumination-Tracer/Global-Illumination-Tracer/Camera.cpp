@@ -1,6 +1,7 @@
 #include "Camera.h"
 
 int x = 0;
+int y = 0;
 Camera::Camera() {
 	eye0 = glm::vec3(-2, 0, 0);
 	eye1 = glm::vec3(-1, -0.5, 0);
@@ -139,7 +140,6 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 	//std::cout << renderRay.end.x << " " << renderRay.end.y << " " << renderRay.end.z << " " << direction.x << " " << direction.y << " " << direction.z << std::endl;
 	x++;
 	
-	
 	if (renderRay.endPointTriangle != nullptr) {
 		glm::vec3 albedo = renderRay.endPointTriangle->color.GetValues() * renderRay.endPointTriangle->reflectance;
 		albedo = glm::normalize(albedo);
@@ -154,35 +154,35 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 			float azimuth = 2 * pi * rand2;
 			//std::cout << theta << " " << azimuth <<std::endl;
 
-		
+
 			//all disepation coditions
-			if (!lightSourceTouched  && (1 - renderRay.endPointTriangle->reflectance) < rand3) {
+			if (!lightSourceTouched && (1 - renderRay.endPointTriangle->reflectance) < rand3) {
 				glm::vec3 normal = renderRay.endPointTriangle->calculateNormal();
 				glm::vec3 outVec = normal;
 				glm::vec3 offset = 0.0001f * normal; //behöver nog, udda nog så blev det bättre resulata med - offset, rätt säker att våran tetrahedron har en fucked normal
-
+				/*
 				outVec.x = sin(theta) * cos(azimuth);
 				outVec.y = sin(theta) * sin(azimuth);
-				outVec.z = cos(theta);
+				outVec.z = cos(theta); //FEL alla punkter på taket syns inte : bevis cos(0 : pi/2) >= 0; så rayn stusar altid uppåt : igenom taket,
 				outVec = glm::normalize(outVec);
-				/*
+				*/
 				glm::vec3 temp = normal + glm::vec3(1, 1, 1);
 				glm::vec3 tangent = glm::cross(normal, temp);
 
 				//FIX???
 				if (glm::length(tangent) == 0)
 					tangent = normal;
-			
-				outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
-				outVec = glm::rotate(outVec, azimuth, normal);
-				*/
+
+				outVec = glm::normalize(glm::rotate(outVec, theta, tangent));// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
+				outVec = glm::normalize((glm::rotate(outVec, azimuth, normal)));
+
 				/*
 				if (glm::dot(normal, outVec) < 0) {
 					outVec = outVec * -1.0f;
 					//std::cout << "HUR" << x << std::endl;
 				}//kanske behöver så rays inte fastnar i object
 				*/
-				glm::vec3 bdrf = (pi * albedo * cos(theta) * sin(theta))/((renderRay.endPointTriangle->reflectance)*nSamples);
+				glm::vec3 bdrf = (pi * albedo * cos(theta) * sin(theta)) / ((renderRay.endPointTriangle->reflectance) * nSamples);
 
 				radiance = renderEquation(renderRay.end, outVec, renderRay);
 				glm::vec3 newRadiance = radiance * bdrf + directRadiance(renderRay, albedo); //kanske problem att den klagar på radiance inte har värde för alla decs av readiance är i if satser.
@@ -196,6 +196,11 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 				return glm::vec3(0.0, 0.0, 0.0);
 			}
 		}
+	}
+	else {
+		;
+		std::cout << y << std::endl;
+		y++;
 	}
 	return glm::vec3(0, 0, 0);
 	
