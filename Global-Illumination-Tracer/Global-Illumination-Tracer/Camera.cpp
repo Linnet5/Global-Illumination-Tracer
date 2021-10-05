@@ -18,6 +18,7 @@ void Camera::render() {
 
 	gen = std::mt19937(rd());
 	dis = std::uniform_real_distribution<float>(0, 1);
+	dis3 = std::uniform_real_distribution<float>(0, 3);
 
 	for (int i = 0; i < 800; i++) {
 		for (int j = 0; j < 800; j++) {
@@ -137,7 +138,8 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 	}
 	//std::cout << renderRay.end.x << " " << renderRay.end.y << " " << renderRay.end.z << " " << direction.x << " " << direction.y << " " << direction.z << std::endl;
 	x++;
-
+	
+	
 	if (renderRay.endPointTriangle != nullptr) {
 		glm::vec3 albedo = renderRay.endPointTriangle->color.GetValues() * renderRay.endPointTriangle->reflectance;
 		albedo = glm::normalize(albedo);
@@ -157,11 +159,12 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 			if (!lightSourceTouched  && (1 - renderRay.endPointTriangle->reflectance) < rand3) {
 				glm::vec3 normal = renderRay.endPointTriangle->calculateNormal();
 				glm::vec3 outVec = normal;
+				glm::vec3 offset = 0.0001f * normal; //behöver nog, udda nog så blev det bättre resulata med - offset, rätt säker att våran tetrahedron har en fucked normal
 
 				outVec.x = sin(theta) * cos(azimuth);
 				outVec.y = sin(theta) * sin(azimuth);
 				outVec.z = cos(theta);
-
+				outVec = glm::normalize(outVec);
 				/*
 				glm::vec3 temp = normal + glm::vec3(1, 1, 1);
 				glm::vec3 tangent = glm::cross(normal, temp);
@@ -173,11 +176,16 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 				outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
 				outVec = glm::rotate(outVec, azimuth, normal);
 				*/
-
+				/*
+				if (glm::dot(normal, outVec) < 0) {
+					outVec = outVec * -1.0f;
+					//std::cout << "HUR" << x << std::endl;
+				}//kanske behöver så rays inte fastnar i object
+				*/
 				glm::vec3 bdrf = (pi * albedo * cos(theta) * sin(theta))/((renderRay.endPointTriangle->reflectance)*nSamples);
 
-				radiance = renderEquation(renderRay.end, glm::normalize(outVec), renderRay);
-				glm::vec3 newRadiance = radiance * bdrf; // +functionSomRäknarShadowRay(renderRay.start); //kanske problem att den klagar på radiance inte har värde för alla decs av readiance är i if satser.
+				radiance = renderEquation(renderRay.end, outVec, renderRay);
+				glm::vec3 newRadiance = radiance * bdrf + directRadiance(renderRay, albedo); //kanske problem att den klagar på radiance inte har värde för alla decs av readiance är i if satser.
 
 				return newRadiance;
 			}
@@ -191,6 +199,37 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 	}
 	return glm::vec3(0, 0, 0);
 	
+}
+
+glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo)
+{
+	glm::vec3 e1 = glm::normalize(glm::vec3(3.5f, 5.5f, 5.0f) - glm::vec3(3.5f, 2.5f, 5.0f));
+	glm::vec3 e2 = glm::normalize(glm::vec3(6.5f, 2.5f, 5.0f) - glm::vec3(3.5f, 2.5f, 5.0f));
+	Ray dummyRay = Ray(renderRay.end, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
+	glm::vec3 shadowRadiance = glm::vec3(0,0,0);
+	int n_samples = 10;
+	for (int i = 0; i < n_samples; i++) {
+		float c1 = dis3(gen);
+		float c2 = dis3(gen);
+		
+		bool V = true;
+
+		glm::vec3 randCord = glm::vec3(3.5f, 2.5f, 5.0f) + c1 * e1 + c2 * e2;
+		glm::vec3 shadowRay = randCord - renderRay.end;
+		
+		for (int obj = 0; obj < 1; obj++) {
+			if (scene.objects[obj]->renderFunction(dummyRay, shadowRay)) {
+				V = false;
+			}
+		}
+
+		if (V) {
+			shadowRadiance +=  -1 * glm::dot(randCord, glm::vec3(0, 0, -1)) * (glm::dot(randCord, glm::normalize(renderRay.endPointTriangle->calculateNormal())) / (randCord * randCord * randCord * randCord));
+		}
+	}
+	glm::vec3 G = (albedo * 9.0f) / (pi * n_samples);
+	
+	return G * shadowRadiance;
 }
 
 void Camera::truncate(BMP& image, const double maxR, const double maxG, const double maxB)

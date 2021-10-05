@@ -13,7 +13,7 @@ bool Tetrahedron::renderFunction (Ray& renderRay, glm::vec3 direction)
 	glm::vec3 t = glm::vec3(999, 999, 999);
 	bool flag = false;
 	for (int tri = 0; tri < 4; tri++) {
-		if(sides[tri].mollerTrumbore(renderRay.start, direction - renderRay.start, renderRay.end)){
+		if(sides[tri].mollerTrumbore(renderRay.start, direction, renderRay.end)){
 			if(glm::length(renderRay.end) < glm::length(t)){
 				renderRay.endPointTriangle = &sides[tri];
 				t = renderRay.end;
