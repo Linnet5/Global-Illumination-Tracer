@@ -192,7 +192,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 				return newRadiance;
 			}
 			else if (lightSourceTouched) {
-				return glm::vec3(1.0, 1.0, 1.0); //eller vad L0 är
+				return glm::vec3(255.0, 255.0, 255.0); //eller vad L0 är
 			}
 			else {
 				return glm::vec3(0.0, 0.0, 0.0);
