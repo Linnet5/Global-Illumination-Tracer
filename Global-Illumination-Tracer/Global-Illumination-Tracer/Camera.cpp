@@ -112,6 +112,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 	Ray renderRay = Ray(start, direction, glm::vec3(0, 0, 0));
 	bool touchedObj = false;
 	bool lightSourceTouched = false;
+
 	glm::vec3 bdrf = glm::vec3(0, 0, 0);
 	glm::vec3 radiance;
 	for (int obj = 0; obj < 1; obj++) {
@@ -138,7 +139,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 		}
 	}
 	//std::cout << renderRay.end.x << " " << renderRay.end.y << " " << renderRay.end.z << " " << direction.x << " " << direction.y << " " << direction.z << std::endl;
-	x++;
+	
 	
 	if (renderRay.endPointTriangle != nullptr) {
 		glm::vec3 albedo = renderRay.endPointTriangle->color.GetValues() * renderRay.endPointTriangle->reflectance;
@@ -153,7 +154,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 			float theta = (pi * rand1) / 3;
 			float azimuth = 2 * pi * rand2;
 			//std::cout << theta << " " << azimuth <<std::endl;
-
+			x++;
 
 			//all disepation coditions
 			if (!lightSourceTouched && (1 - renderRay.endPointTriangle->reflectance) < rand3) {
@@ -185,6 +186,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 				glm::vec3 bdrf = (pi * albedo * cos(theta) * sin(theta)) / ((renderRay.endPointTriangle->reflectance) * nSamples);
 
 				radiance = renderEquation(renderRay.end, outVec, renderRay);
+				x = 0;
 				glm::vec3 newRadiance = radiance * bdrf + directRadiance(renderRay, albedo); //kanske problem att den klagar på radiance inte har värde för alla decs av readiance är i if satser.
 
 				return newRadiance;
@@ -212,7 +214,7 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo)
 	glm::vec3 e2 = glm::normalize(glm::vec3(6.5f, 2.5f, 5.0f) - glm::vec3(3.5f, 2.5f, 5.0f));
 	Ray dummyRay = Ray(renderRay.end, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
 	glm::vec3 shadowRadiance = glm::vec3(0,0,0);
-	int n_samples = 10;
+	int n_samples = 1;
 	for (int i = 0; i < n_samples; i++) {
 		float c1 = dis3(gen);
 		float c2 = dis3(gen);
@@ -232,8 +234,9 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo)
 			shadowRadiance +=  -1 * glm::dot(randCord, glm::vec3(0, 0, -1)) * (glm::dot(randCord, glm::normalize(renderRay.endPointTriangle->calculateNormal())) / (randCord * randCord * randCord * randCord));
 		}
 	}
-	glm::vec3 G = (albedo * 9.0f) / (pi * n_samples);
+	glm::vec3 G = (albedo * 9.0f * glm::vec3(255, 255, 255)) / (pi * n_samples);
 	
+	//std::cout << (G * shadowRadiance).x << " " << (G * shadowRadiance).y << " " << (G * shadowRadiance).z << " " << std::endl;
 	return G * shadowRadiance;
 }
 
