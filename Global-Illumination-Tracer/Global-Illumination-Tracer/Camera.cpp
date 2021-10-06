@@ -242,7 +242,7 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo)
 			float solidAngle = 9.0f / float(n_samples) * glm::clamp(cosLight, 0.0f, 1.0f) / glm::pow(glm::length(shadowRay), 2) / (pi * 2.0f);
 			//std::cout << 9.0f / n_samples * glm::clamp(cosLight, 0.0f, 1.0f) / glm::pow(glm::length(shadowRay), 2) / (pi * 2.0f) << std::endl;
 
-			shadowRadiance += glm::vec3(255, 255, 255) * cosObj * solidAngle * albedo * 10; 
+			shadowRadiance += glm::vec3(255, 255, 255) * cosObj * solidAngle * albedo * 15; 
 			
 			//shadowRadiance +=  (glm::dot(-1.0f * shadowRayDirection, glm::cross(e1, e2)) * (glm::dot(shadowRayDirection, glm::normalize(renderRay.endPointTriangle->calculateNormal())))) / glm::pow(glm::length(shadowRay), 2);
 		}
@@ -250,6 +250,7 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo)
 	//glm::vec3 factor = (albedo * 9.0f * glm::vec3(255, 255, 255)) / (pi * n_samples);
 	//std::cout << glm::to_string(albedo) << std::endl;
 	//std::cout << glm::to_string(shadowRadiance) << std::endl;
+	if (shadowRadiance.x < -0.00001) std::cout << glm::to_string(shadowRadiance) << std::endl;
 	return shadowRadiance;
 	
 	//std::cout << (factor * shadowRadiance).x << " " << (factor * shadowRadiance).y << " " << (factor * shadowRadiance).z << " " << std::endl;
