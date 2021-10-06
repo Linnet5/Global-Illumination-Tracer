@@ -21,7 +21,7 @@ glm::vec3 Triangle::calculateNormal(){
 	 Vertex u = v1 - v0; 
 	 Vertex v = v2 - v0;
 	 glm::vec3 temp;
-	 return glm::cross(u.getCords(),v.getCords());
+	 return glm::normalize(glm::cross(u.getCords(),v.getCords()));
 	 /*
 	 double tempUx = u.getX();
 	 double tempUy = u.getY();
