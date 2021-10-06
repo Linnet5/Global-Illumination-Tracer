@@ -1,4 +1,5 @@
 #pragma once
+#define GLM_ENABLE_EXPERIMENTAL
 #include "Pixel.h"
 #include "Ray.h"
 #include "Triangle.h"
@@ -8,6 +9,7 @@
 #include <random>
 #include "glm/glm.hpp"
 #include "glm/gtx/rotate_vector.hpp"
+#include "glm/ext.hpp"
 
 class Camera
 {
@@ -23,7 +25,6 @@ class Camera
 		std::random_device rd;
 		std::mt19937 gen;
 		std::uniform_real_distribution<float> dis;
-		std::uniform_real_distribution<float> dis3;
 		const float pi = 3.14159265358979323846;
 
 		//Pixel pixelArray = new Pixel [800][800];
