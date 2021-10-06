@@ -212,8 +212,9 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo)
 {
 	glm::vec3 e1 = glm::normalize(glm::vec3(3.5f, 5.5f, 5.0f) - glm::vec3(3.5f, 2.5f, 5.0f));
-	glm::vec3 e2 = glm::normalize(glm::vec3(6.5f, 2.5f, 5.0f) - glm::vec3(3.5f, 2.5f, 5.0f));
-	Ray dummyRay = Ray(renderRay.end, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
+	glm::vec3 e2 = glm::normalize(glm::vec3(6.5f, 2.5f, 5.0f) - glm::vec3(3.5f, 2.5f, 5.0f)); 
+	glm::vec3 offset = 0.0001f * renderRay.endPointTriangle->calculateNormal(); 
+	Ray dummyRay = Ray(renderRay.end + offset, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
 	glm::vec3 shadowRadiance = glm::vec3(0,0,0);
 	int n_samples = 10;
 	for (int i = 0; i < n_samples; i++) {
@@ -228,7 +229,8 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo)
 		
 		for (int obj = 0; obj < 1; obj++) {
 			if (scene.objects[obj]->renderFunction(dummyRay, shadowRayDirection)) {
-				V = false;
+				//if (dummyRay.endPointTriangle == renderRay.endPointTriangle) { std::cout << "d"; }
+					V = false;
 			}
 		}
 		//std::cout << glm::dot(-1.0f * shadowRay, glm::cross(e1, e2)) << " " << glm::dot(shadowRay, glm::normalize(renderRay.endPointTriangle->calculateNormal())) << std::endl;
