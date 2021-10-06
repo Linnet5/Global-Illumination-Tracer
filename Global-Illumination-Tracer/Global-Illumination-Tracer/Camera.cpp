@@ -132,6 +132,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 						if (scene.lightSource[i].mollerTrumbore(renderRay.start, direction, renderRay.end)) {
 							renderRay.endPointTriangle = &scene.lightSource[i];
 							lightSourceTouched = true;
+							return(glm::vec3(255, 255, 255));
 						}
 					}
 				}
@@ -192,7 +193,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 				return newRadiance;
 			}
 			else if (lightSourceTouched) {
-				return glm::vec3(0.0, 0.0, 0.0); //eller vad L0 är
+				return glm::vec3(255.0f, 255.0f, 255.0f); //eller vad L0 är
 			}
 			else {
 				return glm::vec3(0.0, 0.0, 0.0);
@@ -241,7 +242,7 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo)
 			float solidAngle = 9.0f / float(n_samples) * glm::clamp(cosLight, 0.0f, 1.0f) / glm::pow(glm::length(shadowRay), 2) / (pi * 2.0f);
 			//std::cout << 9.0f / n_samples * glm::clamp(cosLight, 0.0f, 1.0f) / glm::pow(glm::length(shadowRay), 2) / (pi * 2.0f) << std::endl;
 
-			shadowRadiance += glm::vec3(255, 255, 255) * cosObj * solidAngle * albedo * 5; 
+			shadowRadiance += glm::vec3(255, 255, 255) * cosObj * solidAngle * albedo * 10; 
 			
 			//shadowRadiance +=  (glm::dot(-1.0f * shadowRayDirection, glm::cross(e1, e2)) * (glm::dot(shadowRayDirection, glm::normalize(renderRay.endPointTriangle->calculateNormal())))) / glm::pow(glm::length(shadowRay), 2);
 		}
