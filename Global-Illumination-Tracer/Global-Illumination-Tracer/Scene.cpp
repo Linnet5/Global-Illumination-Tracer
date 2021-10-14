@@ -44,9 +44,12 @@ Scene::Scene() {
 	room[22] = Triangle(vertexList[6], vertexList[13], vertexList[8], ColorDbl(255, 0, 255));
 	room[23] = Triangle(vertexList[6], vertexList[8], vertexList[1], ColorDbl(255, 0, 255));
 
-	//Lightsource
-	lightSource[0] = Triangle(lightVertex[0], lightVertex[1], lightVertex[2], ColorDbl(255, 255, 255));
+	//Lightsource TEMP
+	lightSource[0] = Triangle(lightVertex[0], lightVertex[1], lightVertex[2], ColorDbl(255, 255, 255));   //REMOVE THIS WHEN LIGHTSOURCE IS IMPLEMENTED AS AN OBJECT
 	lightSource[1] = Triangle(lightVertex[3], lightVertex[2], lightVertex[1], ColorDbl(255, 255, 255));
+
+	//Lightsource as an object
+	lightList[0] = LightSource(lightVertex[0], lightVertex[1], lightVertex[2], lightVertex[3], 1); 
 
 	//List of all objects in the scene
 	objects[0] = new Tetrahedron();

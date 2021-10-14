@@ -5,8 +5,11 @@
 class Tetrahedron : public Shapes{
 public:
 	Triangle sides[4];
-	Vertex vertexList[4] = {Vertex(5, 2, 1), Vertex(5, 0, -1), Vertex(3, 2, -1), Vertex(3,0, 1)};
-
+	float size = 2;
+	glm::vec3 center = glm::vec3(4.0f, 1.0f,-2.0f);
+	Vertex vertexList[4];
+	
+	
 	bool renderFunction(Ray& renderRay, glm::vec3 direction);
 	Tetrahedron();
 };

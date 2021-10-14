@@ -2,27 +2,26 @@
 #include <iostream>
 
 Tetrahedron::Tetrahedron() {
-	sides[0] = Triangle(vertexList[0], vertexList[2], vertexList[1], ColorDbl(227, 242, 160));
-	sides[3] = Triangle(vertexList[0], vertexList[2], vertexList[3], ColorDbl(227 * 0.8, 242 * 0.8, 160 * 0.8)); //RUBEN SÄGER ATT JAG SKA KOMENTERA DET HÄR ÄR FRONT 
-	sides[1] = Triangle(vertexList[0], vertexList[3], vertexList[1], ColorDbl(227 * 0.6, 242 * 0.6, 160 * 0.6));
-	sides[2] = Triangle(vertexList[1], vertexList[2], vertexList[3], ColorDbl(227 * 0.4, 242 * 0.4, 160 * 0.4));  //ordningen spelar roll, vi får wired intersections / en bakre triangle skriver över.
+	vertexList[0] = Vertex(center + glm::vec3(0, 0, size / 2)); //top
+	vertexList[1] = Vertex(center + glm::vec3(-size / 2, 0, -size / 2)); //facing camera
+	vertexList[2] = Vertex(center + glm::vec3(size / 2, size / 2, -size / 2)); //back left
+	vertexList[3] = Vertex(center + glm::vec3(size / 2, -size / 2, -size / 2)); //back right
+
+	sides[0] = Triangle(vertexList[1], vertexList[3], vertexList[2], ColorDbl(227, 242, 160)); 
+	sides[3] = Triangle(vertexList[1], vertexList[0], vertexList[2], ColorDbl(227, 242, 160));  
+	sides[1] = Triangle(vertexList[1], vertexList[0], vertexList[3], ColorDbl(227, 242, 160));
+	sides[2] = Triangle(vertexList[0], vertexList[3], vertexList[2], ColorDbl(227, 242, 160 ));  
 } 
 
 bool Tetrahedron::renderFunction (Ray& renderRay, glm::vec3 direction)
 {
-	float t = 999;
-	int i = 0;
+	
 	bool flag = false;
 	for (int tri = 0; tri < 4; tri++) {
-		if(sides[tri].mollerTrumbore(renderRay.start, direction, renderRay.end)){
-			if(sides[tri].t_distance < t){
-				i = tri;
-				t = sides[tri].t_distance; 
-				flag = true;
+		if(sides[tri].mollerTrumbore(renderRay.start, direction, renderRay.end, renderRay.tDistance)){
+			renderRay.endPointTriangle = &sides[tri];
+			flag = true;
 			}
-			
 		}
-	}
-	if(flag) renderRay.endPointTriangle = &sides[i]; 
 	return flag;
 }

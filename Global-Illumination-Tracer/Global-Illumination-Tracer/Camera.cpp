@@ -19,75 +19,17 @@ void Camera::render() {
 
 	gen = std::mt19937(rd());
 	dis = std::uniform_real_distribution<float>(0, 1);
+	dis3 = std::uniform_real_distribution<float> (0, 3);
 
 	for (int i = 0; i < 800; i++) {
 		for (int j = 0; j < 800; j++) {
 			glm::vec3 pixelPosition = glm::vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
-			Ray renderRay = Ray(eye1, dummy, ColorDbl(glm::vec3(0, 0, 0)));
 			glm::vec3 totalColor = glm::vec3(0,0,0);
-			int raysPerPixel = 45;
+			int raysPerPixel = 500;
 			for (int k = 0; k < raysPerPixel; k++) {
-				totalColor += renderEquation(eye1, glm::normalize(pixelPosition - eye1), renderRay);
+				totalColor += renderEquation(eye1, glm::normalize(pixelPosition - eye1));
 			}
 			pixels[i, j]->setColor(totalColor/raysPerPixel);
-
-			/*
-			glm::vec3 tempColor = glm::vec3(0, 0, 0);
-			for (int a = 0; a < 5; a++) {
-				tempColor += renderEquation(eye1, pixelPosition - eye1, renderRay);
-			}
-			tempColor = tempColor / 5.0f;
-			pixels[i, j]->setColor(tempColor);
-			*/
-
-
-			/* TEMPORÄRT UTKOMMENTERAD
-			glm::vec3 pixelPosition = glm::vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
-			Ray renderRay = Ray(eye1.getCords(), dummy, ColorDbl(glm::vec3(0, 0, 0)));
-			//Vec3 temp = pixelposition - renderRay.start;
-			//std::cout << temp.x() << " " << temp.y() << " " << temp.z() << std::endl;
-			bool touchedObj = false;
-			for (int obj = 0; obj < 1; obj++) {
-				if (scene.objects[obj]->renderFunction(renderRay, pixelPosition)) {
-				touchedObj = true;
-				}
-			}
-
-			//Only render room for the pixels that are not already filled with object pixels
-			if (!touchedObj) {
-				for (int tri = 0; tri < 24; tri++) {
-					//can be improved by letting you switch eye
-					if (scene.room[tri].mollerTrumbore(renderRay.start, pixelPosition - renderRay.start, renderRay.end)) {
-						renderRay.endPointTriangle = &scene.room[tri];
-						if (tri == 5) {
-							for (int i = 0; i < 2; i++) {
-								if (scene.lightSource[i].mollerTrumbore(renderRay.start, pixelPosition - renderRay.start, renderRay.end)) {
-									renderRay.endPointTriangle = &scene.lightSource[i];
-								}
-							}
-						}
-					}
-				}
-			}
-				pixels[i, j]->setRay(&renderRay);
-				if (pixels[i, j]->refRay->endPointTriangle != nullptr) {
-					pixels[i, j]->setColor(ColorDbl(pixels[i, j]->refRay->endPointTriangle->color.GetValues().x, pixels[i, j]->refRay->endPointTriangle->color.GetValues().y, pixels[i, j]->refRay->endPointTriangle->color.GetValues().z));
-
-					//Fetches max color value in the scene for each color channel
-					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().x > maxR)
-						maxR = pixels[i, j]->refRay->endPointTriangle->color.GetValues().x;
-					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().y > maxG)
-						maxG = pixels[i, j]->refRay->endPointTriangle->color.GetValues().y;
-					if (pixels[i, j]->refRay->endPointTriangle->color.GetValues().z > maxB)
-						maxB = pixels[i, j]->refRay->endPointTriangle->color.GetValues().z;
-			}
-
-			//Fills the out image with the values of the pixels array
-			outImage(i, j)->Red = pixels[i, j]->color.GetValues().x;
-			outImage(i, j)->Green = pixels[i, j]->color.GetValues().y;
-			outImage(i, j)->Blue = pixels[i, j]->color.GetValues().z;
-			outImage(i, j)->Alpha = 1;
-			*/
 
 			if (glm::sqrt(pixels[i, j]->color.GetValues().x) > maxR)
 				maxR = glm::sqrt(pixels[i, j]->color.GetValues().x);
@@ -107,12 +49,11 @@ void Camera::render() {
 	truncate(outImage, maxR, maxG, maxB);
 	std::cout << maxR << " " << maxG << " " << maxB << std::endl;
 
-	//createImage(pixels, maxR, maxG, maxB);
 	std::cout << outImage.WriteToFile("nuts.bmp");
 	delete[] pixels;
 }
 
-glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRay) {
+glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 	Ray renderRay = Ray(start, direction, glm::vec3(0, 0, 0));
 	bool touchedObj = false;
 	bool lightSourceTouched = false;
@@ -129,26 +70,28 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 	if (!touchedObj) {
 		for (int tri = 0; tri < 24; tri++) {
 			//can be improved by letting you switch eye
-			if (scene.room[tri].mollerTrumbore(renderRay.start, direction, renderRay.end)) {
+			if (scene.room[tri].mollerTrumbore(renderRay.start, direction, renderRay.end, renderRay.tDistance)) {
 				renderRay.endPointTriangle = &scene.room[tri];
 				if (tri == 5) {
-					for (int i = 0; i < 2; i++) {
-						if (scene.lightSource[i].mollerTrumbore(renderRay.start, direction, renderRay.end)) {
-							renderRay.endPointTriangle = &scene.lightSource[i];
-							lightSourceTouched = true;
-							//return(glm::vec3(255, 255, 255));
-						}
+					if (scene.lightList[0].renderFunction(renderRay, direction)) {
+						//return(glm::vec3(255, 255, 255)); // if you want to see the light source when only looking att directlight
+						lightSourceTouched = true;
 					}
+					//for (int i = 0; i < 2; i++) {
+					//	if (scene.lightSource[i].mollerTrumbore(renderRay.start, direction, renderRay.end)) {
+					//		renderRay.endPointTriangle = &scene.lightSource[i];
+					//		lightSourceTouched = true;
+					//		
+					//	}
+					//}
 				}
 			}
 		}
-	}
-	//std::cout << renderRay.end.x << " " << renderRay.end.y << " " << renderRay.end.z << " " << direction.x << " " << direction.y << " " << direction.z << std::endl;
-	
+	}	
 	
 	if (renderRay.endPointTriangle != nullptr) {
 		glm::vec3 albedo = ((renderRay.endPointTriangle->color.GetValues() / 255.0f) * renderRay.endPointTriangle->reflectance);
-		//return directRadiance(renderRay, albedo);
+		//return directRadiance(renderRay, albedo); //only direct light, no bounces
 
 		const int nSamples = 1;
 		for (int i = 0; i < nSamples; i++) {
@@ -158,20 +101,13 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 
 			float theta = (pi * rand1) / 2;
 			float azimuth = 2 * pi * rand2;
-			//std::cout << theta << " " << azimuth <<std::endl;
-			x++;
 
 			//all disepation coditions
 			if (!lightSourceTouched && (1 - renderRay.endPointTriangle->reflectance) < rand3) {
 				glm::vec3 normal = renderRay.endPointTriangle->calculateNormal();
 				glm::vec3 outVec = normal;
 				glm::vec3 offset = 0.0001f * normal; //behöver nog, udda nog så blev det bättre resulata med - offset, rätt säker att våran tetrahedron har en fucked normal
-				/*
-				outVec.x = sin(theta) * cos(azimuth);
-				outVec.y = sin(theta) * sin(azimuth);
-				outVec.z = cos(theta); //FEL alla punkter på taket syns inte : bevis cos(0 : pi/2) >= 0; så rayn stusar altid uppåt : igenom taket,
-				outVec = glm::normalize(outVec);
-				*/
+
 				glm::vec3 temp = normal + glm::vec3(1, 1, 1);
 				glm::vec3 tangent = glm::cross(normal, temp);
 
@@ -188,13 +124,13 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 					//std::cout << "HUR" << x << std::endl;
 				}//kanske behöver så rays inte fastnar i object
 				*/
-				glm::vec3 brdf = (albedo * cos(theta) * sin(theta) *pi);
+				glm::vec3 brdf = (albedo * cos(theta) * sin(theta) *pi) / ((renderRay.endPointTriangle->reflectance) * nSamples);
 				
-				radiance = renderEquation(renderRay.end + offset, outVec, renderRay);
+				radiance = renderEquation(renderRay.end + offset, outVec);
 				
 				glm::vec3 directLight = directRadiance(renderRay, albedo);
 
-				glm::vec3 newRadiance = (radiance * brdf  + directLight) / ((renderRay.endPointTriangle->reflectance) * nSamples);
+				glm::vec3 newRadiance = (radiance * brdf + directLight);
 
 			/*	if (start == glm::vec3(-1, -0.5, 0) && newRadiance.x == 0 && newRadiance.y == 0 && newRadiance.z == 0) {
 					std::cout << "radiance " << glm::to_string(radiance) << "brdf " << glm::to_string(brdf) << "direct light " << glm::to_string(directLight) << std::endl;
@@ -221,19 +157,19 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 
 glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo)
 {
-	glm::vec3 e1 = glm::normalize(glm::vec3(3.5f, 5.5f, 5.0f) - glm::vec3(3.5f, 2.5f, 5.0f));
-	glm::vec3 e2 = glm::normalize(glm::vec3(6.5f, 2.5f, 5.0f) - glm::vec3(3.5f, 2.5f, 5.0f)); 
+	glm::vec3 e1 = glm::normalize(scene.lightList[0].edge1);
+	glm::vec3 e2 = glm::normalize(scene.lightList[0].edge2); 
 	glm::vec3 offset = 0.0001f * renderRay.endPointTriangle->calculateNormal(); 
 	Ray dummyRay = Ray(renderRay.end + offset, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
 	glm::vec3 shadowRadiance = glm::vec3(0,0,0);
 	int n_samples = 10;
 	for (int i = 0; i < n_samples; i++) {
-		float c1 = dis(gen);
-		float c2 = dis(gen);
+		float c1 = dis3(gen);
+		float c2 = dis3(gen);
 		
 		bool V = true;
 
-		glm::vec3 randCord = glm::vec3(3.5f, 2.5f, 5.0f) + c1 * e1 + c2 * e2;
+		glm::vec3 randCord = scene.lightList[0].tris[0].getVertex(0).getCords() + c1 * e1 + c2 * e2;
 		glm::vec3 shadowRay = randCord - renderRay.end;
 		glm::vec3 shadowRayDirection = glm::normalize(shadowRay);
 		
@@ -244,21 +180,10 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo)
 			}
 		}
 		//std::cout << glm::dot(-1.0f * shadowRay, glm::cross(e1, e2)) << " " << glm::dot(shadowRay, glm::normalize(renderRay.endPointTriangle->calculateNormal())) << std::endl;
-		if (V) {
-
-			/*
-			float cosObj = glm::dot(shadowRayDirection, renderRay.endPointTriangle->calculateNormal());
-
-			float cosLight = glm::dot(glm::cross(e1, e2), -shadowRayDirection);
-
-			float solidAngle = 9.0f / float(n_samples) * glm::clamp(cosLight, 0.0f, 1.0f) / glm::pow(glm::length(shadowRay), 2) / (pi * 2.0f);
-			//std::cout << 9.0f / n_samples * glm::clamp(cosLight, 0.0f, 1.0f) / glm::pow(glm::length(shadowRay), 2) / (pi * 2.0f) << std::endl;
-			*/
-			//shadowRadiance += glm::vec3(255, 255, 255) * cosObj * solidAngle * albedo * 15; 
-			
+		if (V) {	
 			float G = (glm::dot(-1.0f * shadowRay, glm::cross(e1, e2)) / glm::length(shadowRay)) * (glm::dot(shadowRay, glm::normalize(renderRay.endPointTriangle->calculateNormal())) / glm::length(shadowRay)); 
 			G /= glm::dot(shadowRay, shadowRay);
-			shadowRadiance += (G * (9.0f * glm::vec3(255, 255, 255) * 10));
+			shadowRadiance += (G * glm::length((glm::cross(scene.lightList[0].edge1, scene.lightList[0].edge2)) * glm::vec3(255, 255, 255) * 10));
 		}
 	}
 	shadowRadiance =  (shadowRadiance * albedo)  / (pi * n_samples);

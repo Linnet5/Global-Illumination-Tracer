@@ -3,6 +3,7 @@
 #include "ColorDbl.h"
 #include "Direction.h"
 
+
 class Triangle
 {
 private:
@@ -13,17 +14,14 @@ private:
 
 	glm::vec3 dir;
 
-	
-
-
 public:
 	float reflectance = 0.5;
-	float t_distance = 0;
 	ColorDbl color;
 	Triangle();
 	Triangle(Vertex inV0, Vertex inV1, Vertex inV2, ColorDbl inColor);
-	bool mollerTrumbore(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3& intersectionPoint);
+	bool mollerTrumbore(glm::vec3 start, glm::vec3 rayDirection, glm::vec3& intersectionPoint, float& inT);
 	glm::vec3 calculateNormal();
+	Vertex getVertex(int vertexIndex);
 };
 
 

@@ -148,6 +148,7 @@
     <ClInclude Include="EasyBMP_BMP.h" />
     <ClInclude Include="EasyBMP_DataStructures.h" />
     <ClInclude Include="EasyBMP_VariousBMPutilities.h" />
+    <ClInclude Include="LightSource.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="Ray.h" />
@@ -163,6 +164,7 @@
     <ClCompile Include="ColorDbl.cpp" />
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="EasyBMP.cpp" />
+    <ClCompile Include="LightSource.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pixel.cpp" />
     <ClCompile Include="Ray.cpp" />

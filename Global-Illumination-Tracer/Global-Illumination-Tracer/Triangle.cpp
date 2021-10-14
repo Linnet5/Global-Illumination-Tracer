@@ -1,5 +1,6 @@
 #include "Triangle.h"
 
+
 Triangle::Triangle() {
 	//Dummy triangle with all vertices at 0,0,0
 	v0 = Vertex(0, 0, 0);
@@ -13,6 +14,17 @@ Triangle::Triangle(Vertex inV0, Vertex inV1, Vertex inV2, ColorDbl inColor) {
 	v2 = inV2;
 	color = inColor;
 	dir = calculateNormal();
+}
+
+Vertex Triangle::getVertex(int vertexIndex) {
+	switch(vertexIndex) {
+		case 0:
+			return v0;
+		case 1:
+			return v1;
+		case 2:
+			return v2;
+	}
 }
 
 
@@ -34,7 +46,7 @@ glm::vec3 Triangle::calculateNormal(){
 	 return temp; */
 }
 
-bool Triangle::mollerTrumbore(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3& intersectionPoint) {
+bool Triangle::mollerTrumbore(glm::vec3 start, glm::vec3 rayDirection, glm::vec3& intersectionPoint, float& inT) {
 	const double EPSILON = 0.000000001;
 	glm::vec3 edge1, edge2, P, T, Q;
 	double a, f, u, v;
@@ -48,23 +60,21 @@ bool Triangle::mollerTrumbore(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::
 	if (a > -EPSILON && a < EPSILON) return false; //parallel
 
 	f = 1.0 / a;
-	T = rayOrigin - v0.getCords();
+	T = start - v0.getCords();
 	u = f * glm::dot(T, P);
 	if (u < 0.0 || u > 1.0) return false; //utanför triangel enligt barycentric cords
 
 	Q = glm::cross(T, edge1);
 	v = f * glm::dot(rayDirection, Q);
-	if (v < 0.0 || u + v > 1.0) return false; //utanför triangel enligt barycentric cords
+	if (v < 0.0 || u + v > 1.0) return false; //utanför triangel enligt barycentric cordsp
 
 	t = f * glm::dot(edge2, Q);
 	if (t > EPSILON) {
-		this->t_distance = t;
-		intersectionPoint = rayOrigin + rayDirection * t;
-		return true;
+		if (inT > t) {
+			inT = t;
+			intersectionPoint = start + rayDirection * t;
+			return true;
+		}
 	}
-
-	else {
 		return false; 
-	}
-
 }
