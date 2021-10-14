@@ -10,16 +10,19 @@ Tetrahedron::Tetrahedron() {
 
 bool Tetrahedron::renderFunction (Ray& renderRay, glm::vec3 direction)
 {
-	glm::vec3 t = glm::vec3(999.0f, 999.0f, 999.0f);
+	float t = 999;
+	int i = 0;
 	bool flag = false;
 	for (int tri = 0; tri < 4; tri++) {
 		if(sides[tri].mollerTrumbore(renderRay.start, direction, renderRay.end)){
-			if(glm::length(renderRay.end) < glm::length(t)){
-				renderRay.endPointTriangle = &sides[tri];
-				t = renderRay.end; //fel ingetligen men får kanske fixa sen
+			if(sides[tri].t_distance < t){
+				i = tri;
+				t = sides[tri].t_distance; 
 				flag = true;
 			}
+			
 		}
 	}
+	if(flag) renderRay.endPointTriangle = &sides[i]; 
 	return flag;
 }

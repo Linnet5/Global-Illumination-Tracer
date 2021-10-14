@@ -24,8 +24,12 @@ void Camera::render() {
 		for (int j = 0; j < 800; j++) {
 			glm::vec3 pixelPosition = glm::vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
 			Ray renderRay = Ray(eye1, dummy, ColorDbl(glm::vec3(0, 0, 0)));
-
-			pixels[i, j]->setColor(renderEquation(eye1, pixelPosition - eye1, renderRay));
+			glm::vec3 totalColor = glm::vec3(0,0,0);
+			int raysPerPixel = 45;
+			for (int k = 0; k < raysPerPixel; k++) {
+				totalColor += renderEquation(eye1, glm::normalize(pixelPosition - eye1), renderRay);
+			}
+			pixels[i, j]->setColor(totalColor/raysPerPixel);
 
 			/*
 			glm::vec3 tempColor = glm::vec3(0, 0, 0);
@@ -85,12 +89,12 @@ void Camera::render() {
 			outImage(i, j)->Alpha = 1;
 			*/
 
-			if (pixels[i, j]->color.GetValues().x > maxR)
-				maxR = pixels[i, j]->color.GetValues().x;
-			if (pixels[i, j]->color.GetValues().y > maxG)
-				maxG = pixels[i, j]->color.GetValues().y;
-			if (pixels[i, j]->color.GetValues().z > maxB)
-				maxB = pixels[i, j]->color.GetValues().z;
+			if (glm::sqrt(pixels[i, j]->color.GetValues().x) > maxR)
+				maxR = glm::sqrt(pixels[i, j]->color.GetValues().x);
+			if (glm::sqrt(pixels[i, j]->color.GetValues().y) > maxG)
+				maxG = glm::sqrt(pixels[i, j]->color.GetValues().y);
+			if (glm::sqrt(pixels[i, j]->color.GetValues().z) > maxB)
+				maxB = glm::sqrt(pixels[i, j]->color.GetValues().z);
 			
 
 			outImage(i, j)->Red = pixels[i, j]->color.GetValues().x;
@@ -132,7 +136,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 						if (scene.lightSource[i].mollerTrumbore(renderRay.start, direction, renderRay.end)) {
 							renderRay.endPointTriangle = &scene.lightSource[i];
 							lightSourceTouched = true;
-							return(glm::vec3(255, 255, 255));
+							//return(glm::vec3(255, 255, 255));
 						}
 					}
 				}
@@ -143,8 +147,8 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 	
 	
 	if (renderRay.endPointTriangle != nullptr) {
-		glm::vec3 albedo = (renderRay.endPointTriangle->color.GetValues() / 255.0f) * renderRay.endPointTriangle->reflectance;
-		return directRadiance(renderRay, albedo);
+		glm::vec3 albedo = ((renderRay.endPointTriangle->color.GetValues() / 255.0f) * renderRay.endPointTriangle->reflectance);
+		//return directRadiance(renderRay, albedo);
 
 		const int nSamples = 1;
 		for (int i = 0; i < nSamples; i++) {
@@ -152,7 +156,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 			float rand2 = dis(gen);
 			float rand3 = dis(gen);
 
-			float theta = (pi * rand1) / 3;
+			float theta = (pi * rand1) / 2;
 			float azimuth = 2 * pi * rand2;
 			//std::cout << theta << " " << azimuth <<std::endl;
 			x++;
@@ -175,8 +179,8 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 				if (glm::length(tangent) == 0)
 					tangent = normal;
 
-				outVec = glm::normalize(glm::rotate(outVec, theta, tangent));// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
-				outVec = glm::normalize((glm::rotate(outVec, azimuth, normal)));
+				outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
+				outVec = glm::normalize(glm::rotate(outVec, azimuth, normal));
 
 				/*
 				if (glm::dot(normal, outVec) < 0) {
@@ -184,11 +188,17 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction, Ray oldRa
 					//std::cout << "HUR" << x << std::endl;
 				}//kanske behöver så rays inte fastnar i object
 				*/
-				glm::vec3 brdf = (pi * albedo * cos(theta) * sin(theta)) / ((renderRay.endPointTriangle->reflectance) * nSamples);
+				glm::vec3 brdf = (albedo * cos(theta) * sin(theta) *pi);
 				
 				radiance = renderEquation(renderRay.end + offset, outVec, renderRay);
 				
-				glm::vec3 newRadiance = radiance * brdf + directRadiance(renderRay, albedo); 
+				glm::vec3 directLight = directRadiance(renderRay, albedo);
+
+				glm::vec3 newRadiance = (radiance * brdf  + directLight) / ((renderRay.endPointTriangle->reflectance) * nSamples);
+
+			/*	if (start == glm::vec3(-1, -0.5, 0) && newRadiance.x == 0 && newRadiance.y == 0 && newRadiance.z == 0) {
+					std::cout << "radiance " << glm::to_string(radiance) << "brdf " << glm::to_string(brdf) << "direct light " << glm::to_string(directLight) << std::endl;
+				} */
 				 //std::cout << glm::to_string(newRadiance) << std::endl;
 				return newRadiance;
 			}
@@ -236,23 +246,25 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo)
 		//std::cout << glm::dot(-1.0f * shadowRay, glm::cross(e1, e2)) << " " << glm::dot(shadowRay, glm::normalize(renderRay.endPointTriangle->calculateNormal())) << std::endl;
 		if (V) {
 
-		
+			/*
 			float cosObj = glm::dot(shadowRayDirection, renderRay.endPointTriangle->calculateNormal());
 
 			float cosLight = glm::dot(glm::cross(e1, e2), -shadowRayDirection);
 
 			float solidAngle = 9.0f / float(n_samples) * glm::clamp(cosLight, 0.0f, 1.0f) / glm::pow(glm::length(shadowRay), 2) / (pi * 2.0f);
 			//std::cout << 9.0f / n_samples * glm::clamp(cosLight, 0.0f, 1.0f) / glm::pow(glm::length(shadowRay), 2) / (pi * 2.0f) << std::endl;
-
-			shadowRadiance += glm::vec3(255, 255, 255) * cosObj * solidAngle * albedo * 15; 
+			*/
+			//shadowRadiance += glm::vec3(255, 255, 255) * cosObj * solidAngle * albedo * 15; 
 			
-			//shadowRadiance +=  (glm::dot(-1.0f * shadowRayDirection, glm::cross(e1, e2)) * (glm::dot(shadowRayDirection, glm::normalize(renderRay.endPointTriangle->calculateNormal())))) / glm::pow(glm::length(shadowRay), 2);
+			float G = (glm::dot(-1.0f * shadowRay, glm::cross(e1, e2)) / glm::length(shadowRay)) * (glm::dot(shadowRay, glm::normalize(renderRay.endPointTriangle->calculateNormal())) / glm::length(shadowRay)); 
+			G /= glm::dot(shadowRay, shadowRay);
+			shadowRadiance += (G * (9.0f * glm::vec3(255, 255, 255) * 10));
 		}
 	}
-	//glm::vec3 factor = (albedo * 9.0f * glm::vec3(255, 255, 255)) / (pi * n_samples);
+	shadowRadiance =  (shadowRadiance * albedo)  / (pi * n_samples);
 	//std::cout << glm::to_string(albedo) << std::endl;
 	//std::cout << glm::to_string(shadowRadiance) << std::endl;
-	if (shadowRadiance.x < -0.00001) std::cout << glm::to_string(shadowRadiance) << std::endl;
+
 	return shadowRadiance;
 	
 	//std::cout << (factor * shadowRadiance).x << " " << (factor * shadowRadiance).y << " " << (factor * shadowRadiance).z << " " << std::endl;
@@ -263,9 +275,9 @@ void Camera::truncate(BMP& image, const double maxR, const double maxG, const do
 {
 	for (int i = 0; i < 800; i++) {
 		for (int j = 0; j < 800; j++) {
-			image(i, j)->Red = image(i, j)->Red * (255.99 / maxR);
-			image(i, j)->Green = image(i, j)->Green * (255.99 / maxG);
-			image(i, j)->Blue = image(i, j)->Blue * (255.99 / maxB);
+			image(i, j)->Red = glm::sqrt(image(i, j)->Red) * (255.99 / maxR);
+			image(i, j)->Green = glm::sqrt(image(i, j)->Green) * (255.99 / maxG);
+			image(i, j)->Blue = glm::sqrt(image(i, j)->Blue) * (255.99 / maxB);
 		}
 	}
 }

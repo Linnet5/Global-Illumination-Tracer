@@ -17,7 +17,8 @@ private:
 
 
 public:
-	float reflectance = 0.8;
+	float reflectance = 0.5;
+	float t_distance = 0;
 	ColorDbl color;
 	Triangle();
 	Triangle(Vertex inV0, Vertex inV1, Vertex inV2, ColorDbl inColor);

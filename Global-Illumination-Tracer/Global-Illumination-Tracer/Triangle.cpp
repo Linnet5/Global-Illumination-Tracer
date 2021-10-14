@@ -58,6 +58,7 @@ bool Triangle::mollerTrumbore(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::
 
 	t = f * glm::dot(edge2, Q);
 	if (t > EPSILON) {
+		this->t_distance = t;
 		intersectionPoint = rayOrigin + rayDirection * t;
 		return true;
 	}
