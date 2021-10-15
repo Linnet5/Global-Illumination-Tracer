@@ -186,7 +186,7 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo, glm::vec3 norm
 		glm::vec3 shadowRay = randCord - renderRay.end;
 		glm::vec3 shadowRayDirection = glm::normalize(shadowRay);
 		
-		for (int obj = 0; obj < 1; obj++) {
+		for (int obj = 0; obj < 2; obj++) {
 			if (scene.objects[obj]->renderFunction(dummyRay, shadowRayDirection)) {
 				//if (dummyRay.endPointTriangle == renderRay.endPointTriangle) { std::cout << "d"; }
 					V = false;
@@ -197,6 +197,7 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo, glm::vec3 norm
 			float G = (glm::dot(-1.0f * shadowRay, glm::cross(e1, e2)) / glm::length(shadowRay)) * (glm::dot(shadowRay, normal) / glm::length(shadowRay)); 
 			G /= glm::dot(shadowRay, shadowRay);
 			shadowRadiance += (G * glm::length((glm::cross(scene.lightList[0].edge1, scene.lightList[0].edge2)) * glm::vec3(255, 255, 255) * 6));
+			//if (G < -0.01) std::cout << glm::to_string(shadowRadiance);
 		}
 	}
 	shadowRadiance =  (shadowRadiance * albedo)  / (pi * n_samples);
