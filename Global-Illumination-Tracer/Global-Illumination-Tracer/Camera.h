@@ -36,7 +36,7 @@ class Camera
 		glm::vec3 renderEquation(glm::vec3 start, glm::vec3 direction);
 		glm::vec3 lambertianReflector(Ray renderRay, glm::vec3 albedo, float reflectance, glm::vec3 normal);
 		glm::vec3 mirrorReflector(Ray renderRay, glm::vec3 normal);
-		glm::vec3 directRadiance(Ray renderRay, glm::vec3 albedo);
+		glm::vec3 directRadiance(Ray renderRay, glm::vec3 albedo, glm::vec3 normal);
 		
 		//void createImage(Pixel pixels[800][800], double maxR, double maxG, double maxB);
 };

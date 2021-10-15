@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "Tetrahedron.h"
+#include "Sphere.h"
 
 Scene::Scene() {
 	//--Hardcoded room.--//
@@ -53,4 +54,5 @@ Scene::Scene() {
 
 	//List of all objects in the scene
 	objects[0] = new Tetrahedron();
+	objects[1] = new Sphere();
 }

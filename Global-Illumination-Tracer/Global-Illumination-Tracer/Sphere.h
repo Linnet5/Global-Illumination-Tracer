@@ -1,7 +1,6 @@
 #pragma once
 #include "Shapes.h"
-#include "Quadric.h"
-class Sphere : public Shapes , public Quadric{   
+class Sphere : public Shapes{   
    
 	public:
 		glm::vec3 center;
