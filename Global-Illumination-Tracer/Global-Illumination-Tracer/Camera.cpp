@@ -60,8 +60,9 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 
 	glm::vec3 brdf = glm::vec3(0, 0, 0);
 	glm::vec3 radiance;
-	for (int obj = 0; obj < 1; obj++) {
+	for (int obj = 0; obj < 2; obj++) {
 		if (scene.objects[obj]->renderFunction(renderRay, direction)) {
+
 			touchedObj = true;
 		}
 	}
@@ -77,73 +78,37 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 						//return(glm::vec3(255, 255, 255)); // if you want to see the light source when only looking att directlight
 						lightSourceTouched = true;
 					}
-					//for (int i = 0; i < 2; i++) {
-					//	if (scene.lightSource[i].mollerTrumbore(renderRay.start, direction, renderRay.end)) {
-					//		renderRay.endPointTriangle = &scene.lightSource[i];
-					//		lightSourceTouched = true;
-					//		
-					//	}
-					//}
+
 				}
 			}
 		}
 	}	
+
+	if (lightSourceTouched) {
+		return glm::vec3(255.0f, 255.0f, 255.0f); //eller vad L0 är
+	}
 	
 	if (renderRay.endPointTriangle != nullptr) {
-		glm::vec3 albedo = ((renderRay.endPointTriangle->color.GetValues() / 255.0f) * renderRay.endPointTriangle->material.reflectance);
-		//return directRadiance(renderRay, albedo); //only direct light, no bounces
-
-		const int nSamples = 1;
-		for (int i = 0; i < nSamples; i++) {
-			float rand1 = dis(gen);
-			float rand2 = dis(gen);
-			float rand3 = dis(gen);
-
-			float theta = (pi * rand1) / 2;
-			float azimuth = 2 * pi * rand2;
-
-			//all disepation coditions
-			if (!lightSourceTouched && (1 - renderRay.endPointTriangle->material.reflectance) < rand3) {
-				glm::vec3 normal = renderRay.endPointTriangle->calculateNormal();
-				glm::vec3 outVec = normal;
-				glm::vec3 offset = 0.0001f * normal; //behöver nog, udda nog så blev det bättre resulata med - offset, rätt säker att våran tetrahedron har en fucked normal
-
-				glm::vec3 temp = normal + glm::vec3(1, 1, 1);
-				glm::vec3 tangent = glm::cross(normal, temp);
-
-				//FIX???
-				if (glm::length(tangent) == 0)
-					tangent = normal;
-
-				outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
-				outVec = glm::normalize(glm::rotate(outVec, azimuth, normal));
-
-				/*
-				if (glm::dot(normal, outVec) < 0) {
-					outVec = outVec * -1.0f;
-					//std::cout << "HUR" << x << std::endl;
-				}//kanske behöver så rays inte fastnar i object
-				*/
-				glm::vec3 brdf = (albedo * cos(theta) * sin(theta) *pi) / ((renderRay.endPointTriangle->material.reflectance) * nSamples);
-				
-				radiance = renderEquation(renderRay.end + offset, outVec);
-				
-				glm::vec3 directLight = directRadiance(renderRay, albedo);
-
-				glm::vec3 newRadiance = (radiance * brdf + directLight);
-
-			/*	if (start == glm::vec3(-1, -0.5, 0) && newRadiance.x == 0 && newRadiance.y == 0 && newRadiance.z == 0) {
-					std::cout << "radiance " << glm::to_string(radiance) << "brdf " << glm::to_string(brdf) << "direct light " << glm::to_string(directLight) << std::endl;
-				} */
-				 //std::cout << glm::to_string(newRadiance) << std::endl;
-				return newRadiance;
-			}
-			else if (lightSourceTouched) {
-				return glm::vec3(255.0f, 255.0f, 255.0f); //eller vad L0 är
-			}
-			else {
-				return glm::vec3(0.0, 0.0, 0.0);
-			}
+		float reflectance = renderRay.endPointTriangle->material.reflectance;
+		glm::vec3 normal = renderRay.endPointTriangle->calculateNormal();
+		if (reflectance < 1) {
+			glm::vec3 albedo = ((renderRay.endPointTriangle->color.GetValues() / 255.0f) * renderRay.endPointTriangle->material.reflectance);
+			return lambertianReflector(renderRay, albedo, reflectance, normal);
+		}
+		else{
+			//return mirrorReflector(renderRay, normal);
+		}
+	}
+	
+	else if (renderRay.endPointQuadric != nullptr) {
+		float reflectance = renderRay.endPointQuadric->material.reflectance;
+		glm::vec3 normal = renderRay.end - renderRay.endPointQuadric->center;
+		if (reflectance < 1) {
+			glm::vec3 albedo = ((renderRay.endPointTriangle->color.GetValues() / 255.0f) * renderRay.endPointTriangle->material.reflectance);
+			return lambertianReflector(renderRay, albedo, reflectance, normal);
+		}
+		else {
+			//return mirrorReflector(renderRay, normal);
 		}
 	}
 	else {
@@ -153,6 +118,52 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 	}
 	return glm::vec3(0, 0, 0);
 	
+}
+
+glm::vec3 Camera::lambertianReflector(Ray renderRay, glm::vec3 albedo, float reflectance, glm::vec3 normal)
+{
+	float rand3 = dis(gen);
+	if ((1 - reflectance) < rand3) {
+
+		float rand1 = dis(gen);
+		float rand2 = dis(gen);
+		
+
+		float theta = (pi * rand1) / 2;
+		float azimuth = 2 * pi * rand2;
+
+		//all disepation coditions
+		
+			glm::vec3 outVec = normal;
+			glm::vec3 offset = 0.0001f * normal; //behöver nog, udda nog så blev det bättre resulata med - offset, rätt säker att våran tetrahedron har en fucked normal
+
+			glm::vec3 temp = normal + glm::vec3(1, 1, 1);
+			glm::vec3 tangent = glm::cross(normal, temp);
+
+			//FIX???
+			if (glm::length(tangent) == 0)
+				tangent = normal;
+
+			outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
+			outVec = glm::normalize(glm::rotate(outVec, azimuth, normal));
+
+			glm::vec3 brdf = (albedo * cos(theta) * sin(theta) * pi) / ((renderRay.endPointTriangle->material.reflectance));
+
+			glm::vec3 radiance = renderEquation(renderRay.end + offset, outVec);
+
+			glm::vec3 directLight = directRadiance(renderRay, albedo);
+
+			glm::vec3 newRadiance = (radiance * brdf + directLight);
+
+			return newRadiance;
+		}
+		return glm::vec3(0, 0, 0);
+	}
+		
+
+glm::vec3 Camera::mirrorReflector(Ray renderRay, glm::vec3 normal)
+{
+	return glm::vec3();
 }
 
 glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo)

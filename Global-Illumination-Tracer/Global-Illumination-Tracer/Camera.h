@@ -34,6 +34,8 @@ class Camera
 		void render();
 		void truncate(BMP& image, const double maxR, const double maxG, const double maxB);
 		glm::vec3 renderEquation(glm::vec3 start, glm::vec3 direction);
+		glm::vec3 lambertianReflector(Ray renderRay, glm::vec3 albedo, float reflectance, glm::vec3 normal);
+		glm::vec3 mirrorReflector(Ray renderRay, glm::vec3 normal);
 		glm::vec3 directRadiance(Ray renderRay, glm::vec3 albedo);
 		
 		//void createImage(Pixel pixels[800][800], double maxR, double maxG, double maxB);
