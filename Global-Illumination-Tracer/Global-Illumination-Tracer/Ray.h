@@ -9,6 +9,7 @@ public:
 	glm::vec3 start;
 	glm::vec3 end;
 	Triangle* endPointTriangle;
+	//* endPointQuadric = nullptr;
 	ColorDbl color;
 	float tDistance;
 	Ray(const glm::vec3& inStart, const glm::vec3& inEnd, ColorDbl inColor);

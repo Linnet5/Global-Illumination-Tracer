@@ -25,7 +25,7 @@ void Camera::render() {
 		for (int j = 0; j < 800; j++) {
 			glm::vec3 pixelPosition = glm::vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
 			glm::vec3 totalColor = glm::vec3(0,0,0);
-			int raysPerPixel = 500;
+			int raysPerPixel = 200;
 			for (int k = 0; k < raysPerPixel; k++) {
 				totalColor += renderEquation(eye1, glm::normalize(pixelPosition - eye1));
 			}
@@ -90,7 +90,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 	}	
 	
 	if (renderRay.endPointTriangle != nullptr) {
-		glm::vec3 albedo = ((renderRay.endPointTriangle->color.GetValues() / 255.0f) * renderRay.endPointTriangle->reflectance);
+		glm::vec3 albedo = ((renderRay.endPointTriangle->color.GetValues() / 255.0f) * renderRay.endPointTriangle->material.reflectance);
 		//return directRadiance(renderRay, albedo); //only direct light, no bounces
 
 		const int nSamples = 1;
@@ -103,7 +103,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 			float azimuth = 2 * pi * rand2;
 
 			//all disepation coditions
-			if (!lightSourceTouched && (1 - renderRay.endPointTriangle->reflectance) < rand3) {
+			if (!lightSourceTouched && (1 - renderRay.endPointTriangle->material.reflectance) < rand3) {
 				glm::vec3 normal = renderRay.endPointTriangle->calculateNormal();
 				glm::vec3 outVec = normal;
 				glm::vec3 offset = 0.0001f * normal; //behöver nog, udda nog så blev det bättre resulata med - offset, rätt säker att våran tetrahedron har en fucked normal
@@ -124,7 +124,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 					//std::cout << "HUR" << x << std::endl;
 				}//kanske behöver så rays inte fastnar i object
 				*/
-				glm::vec3 brdf = (albedo * cos(theta) * sin(theta) *pi) / ((renderRay.endPointTriangle->reflectance) * nSamples);
+				glm::vec3 brdf = (albedo * cos(theta) * sin(theta) *pi) / ((renderRay.endPointTriangle->material.reflectance) * nSamples);
 				
 				radiance = renderEquation(renderRay.end + offset, outVec);
 				

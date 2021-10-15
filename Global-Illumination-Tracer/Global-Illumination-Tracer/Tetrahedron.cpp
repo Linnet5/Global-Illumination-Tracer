@@ -7,10 +7,10 @@ Tetrahedron::Tetrahedron() {
 	vertexList[2] = Vertex(center + glm::vec3(size / 2, size / 2, -size / 2)); //back left
 	vertexList[3] = Vertex(center + glm::vec3(size / 2, -size / 2, -size / 2)); //back right
 
-	sides[0] = Triangle(vertexList[1], vertexList[3], vertexList[2], ColorDbl(227, 242, 160)); 
-	sides[3] = Triangle(vertexList[1], vertexList[0], vertexList[2], ColorDbl(227, 242, 160));  
-	sides[1] = Triangle(vertexList[1], vertexList[0], vertexList[3], ColorDbl(227, 242, 160));
-	sides[2] = Triangle(vertexList[0], vertexList[3], vertexList[2], ColorDbl(227, 242, 160 ));  
+	sides[0] = Triangle(vertexList[1], vertexList[3], vertexList[2], ColorDbl(227, 242, 160), Material(0.5)); 
+	sides[3] = Triangle(vertexList[1], vertexList[0], vertexList[2], ColorDbl(227, 242, 160), Material(0.5));  
+	sides[1] = Triangle(vertexList[1], vertexList[0], vertexList[3], ColorDbl(227, 242, 160), Material(0.5));
+	sides[2] = Triangle(vertexList[0], vertexList[3], vertexList[2], ColorDbl(227, 242, 160), Material(0.5));  
 } 
 
 bool Tetrahedron::renderFunction (Ray& renderRay, glm::vec3 direction)

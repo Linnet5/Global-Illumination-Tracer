@@ -6,14 +6,16 @@ Triangle::Triangle() {
 	v0 = Vertex(0, 0, 0);
 	v1 = v0;
 	v2 = v0;
+	material = Material();
 }
 
-Triangle::Triangle(Vertex inV0, Vertex inV1, Vertex inV2, ColorDbl inColor) {
+Triangle::Triangle(Vertex inV0, Vertex inV1, Vertex inV2, ColorDbl inColor, Material inMaterial) {
 	v0 = inV0;
 	v1 = inV1;
 	v2 = inV2;
 	color = inColor;
 	dir = calculateNormal();
+	material = inMaterial;
 }
 
 Vertex Triangle::getVertex(int vertexIndex) {
@@ -29,21 +31,10 @@ Vertex Triangle::getVertex(int vertexIndex) {
 
 
 glm::vec3 Triangle::calculateNormal(){
-	
 	 Vertex u = v1 - v0; 
 	 Vertex v = v2 - v0;
 	 glm::vec3 temp;
 	 return glm::normalize(glm::cross(u.getCords(),v.getCords()));
-	 /*
-	 double tempUx = u.getX();
-	 double tempUy = u.getY();
-	 double tempUz = u.getZ();
-	 double tempVx = v.getX();
-	 double tempVy = v.getY();
-	 double tempVz = v.getZ();
-
-	 Direction temp((tempUy * tempVz) - (tempUz * tempVy), (tempUz * tempVx) - (tempUx * tempVz), (tempUx * tempVy) - (tempUy * tempVx));
-	 return temp; */
 }
 
 bool Triangle::mollerTrumbore(glm::vec3 start, glm::vec3 rayDirection, glm::vec3& intersectionPoint, float& inT) {
