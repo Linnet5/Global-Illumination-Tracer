@@ -21,7 +21,7 @@ bool Sphere::renderFunction(Ray& renderRay, glm::vec3 direction)
 		if (d > 0 && d < renderRay.tDistance) {
 			renderRay.tDistance = d;
 			renderRay.end = renderRay.start + d * direction;
-			
+			renderRay.endPointQuadric = this;
 			flag = true;
 		}
 	}

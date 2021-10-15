@@ -152,6 +152,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="Pixel.h" />
+    <ClInclude Include="Quadric.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shapes.h" />
