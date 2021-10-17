@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Sphere.h" //Forward declared in Ray
 
 int x = 0;
 int y = 0;
@@ -101,11 +102,11 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 		}
 	}
 	
-	else if (renderRay.endPointSphere) {
-		float reflectance = renderRay.sphereReflectance;
-		glm::vec3 normal = glm::normalize(renderRay.end - renderRay.center);
+	else if (renderRay.endPointSphere != nullptr) {
+		float reflectance = renderRay.endPointSphere->material.reflectance;
+		glm::vec3 normal = glm::normalize(renderRay.end - renderRay.endPointSphere->center);
 		if (reflectance < 1) {
-			glm::vec3 albedo = ((renderRay.sphereColor.GetValues() / 255.0f) * reflectance);
+			glm::vec3 albedo = ((renderRay.endPointSphere->color.GetValues() / 255.0f) * reflectance);
 			return directRadiance(renderRay, albedo, normal);
 			return lambertianReflector(renderRay, albedo, reflectance, normal);
 		}
@@ -180,7 +181,7 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo, glm::vec3 norm
 	glm::vec3 offset = 0.0001f * normal; 
 	Ray dummyRay = Ray(renderRay.end + offset, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
 	glm::vec3 shadowRadiance = glm::vec3(0,0,0);
-	int n_samples = 1;
+	int n_samples = 10;
 	for (int i = 0; i < n_samples; i++) {
 		float c1 = dis3(gen);
 		float c2 = dis3(gen);

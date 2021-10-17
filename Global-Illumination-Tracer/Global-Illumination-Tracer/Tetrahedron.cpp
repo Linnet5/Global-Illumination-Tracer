@@ -20,7 +20,7 @@ bool Tetrahedron::renderFunction (Ray& renderRay, glm::vec3 direction)
 	for (int tri = 0; tri < 4; tri++) {
 		if(sides[tri].mollerTrumbore(renderRay.start, direction, renderRay.end, renderRay.tDistance)){
 			renderRay.endPointTriangle = &sides[tri];
-			renderRay.endPointSphere = false;
+			renderRay.endPointSphere = nullptr;
 			flag = true;
 			}
 		}
