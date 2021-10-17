@@ -2,10 +2,10 @@
 
 Sphere::Sphere()
 {
-	center = glm::vec3(4.0f, 1.0f, 0.0f);
+	center = glm::vec3(3.0f, 0.0f, -1.0f);
 	radius = 1.0f;
 	color = ColorDbl(0, 255, 255);
-	material = Material(0.5f);
+	material = Material(1.0f);
 }
 
 bool Sphere::renderFunction(Ray& renderRay, glm::vec3 direction)

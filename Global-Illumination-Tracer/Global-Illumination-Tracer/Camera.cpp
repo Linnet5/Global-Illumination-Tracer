@@ -4,7 +4,7 @@ int x = 0;
 int y = 0;
 Camera::Camera() {
 	eye0 = glm::vec3(-2, 0, 0);
-	eye1 = glm::vec3(-1, -0.5, 0);
+	eye1 = glm::vec3(-1, 0.0, 0);
 	eye2 = glm::vec3(0, 0, 0);
 }
 
@@ -25,7 +25,7 @@ void Camera::render() {
 		for (int j = 0; j < 800; j++) {
 			glm::vec3 pixelPosition = glm::vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
 			glm::vec3 totalColor = glm::vec3(0,0,0);
-			int raysPerPixel = 20;
+			int raysPerPixel = 50;
 			for (int k = 0; k < raysPerPixel; k++) {
 				totalColor += renderEquation(eye1, glm::normalize(pixelPosition - eye1));
 			}
@@ -97,7 +97,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 			return lambertianReflector(renderRay, albedo, reflectance, normal);
 		}
 		else{
-			//return mirrorReflector(renderRay, normal);
+			return mirrorReflector(renderRay, normal);
 		}
 	}
 	
@@ -110,7 +110,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 			return lambertianReflector(renderRay, albedo, reflectance, normal);
 		}
 		else {
-			//return mirrorReflector(renderRay, normal);
+			return mirrorReflector(renderRay, normal);
 		}
 	}
 	else {
@@ -125,6 +125,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 glm::vec3 Camera::lambertianReflector(Ray renderRay, glm::vec3 albedo, float reflectance, glm::vec3 normal)
 {
 	float rand3 = dis(gen);
+
 	if ((1 - reflectance) < rand3) {
 
 		float rand1 = dis(gen);
@@ -133,39 +134,43 @@ glm::vec3 Camera::lambertianReflector(Ray renderRay, glm::vec3 albedo, float ref
 
 		float theta = (pi * rand1) / 2;
 		float azimuth = 2 * pi * rand2;
-
-		//all disepation coditions
 		
-			glm::vec3 outVec = normal;
-			glm::vec3 offset = 0.0001f * normal; //behöver nog, udda nog så blev det bättre resulata med - offset, rätt säker att våran tetrahedron har en fucked normal
+		glm::vec3 outVec = normal;
+		glm::vec3 offset = 0.0001f * normal; //behöver nog, udda nog så blev det bättre resulata med - offset, rätt säker att våran tetrahedron har en fucked normal
 
-			glm::vec3 temp = normal + glm::vec3(1, 1, 1);
-			glm::vec3 tangent = glm::cross(normal, temp);
+		glm::vec3 temp = normal + glm::vec3(1, 1, 1);
+		glm::vec3 tangent = glm::cross(normal, temp);
 
-			//FIX???
-			if (glm::length(tangent) == 0)
-				tangent = normal;
-
-			outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
-			outVec = glm::normalize(glm::rotate(outVec, azimuth, normal));
-
-			glm::vec3 brdf = (albedo * cos(theta) * sin(theta) * pi) / ((reflectance));
-
-			glm::vec3 radiance = renderEquation(renderRay.end + offset, outVec);
-
-			glm::vec3 directLight = directRadiance(renderRay, albedo, normal);
-
-			glm::vec3 newRadiance = (radiance * brdf + directLight);
-
-			return newRadiance;
+		//FIX???
+		if (glm::length(tangent) == 0) {
+			tangent = normal;
 		}
-		return glm::vec3(0, 0, 0);
+
+		outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
+		outVec = glm::normalize(glm::rotate(outVec, azimuth, normal));
+
+		glm::vec3 brdf = (albedo * cos(theta) * sin(theta) * pi) / ((reflectance));
+
+		glm::vec3 radiance = renderEquation(renderRay.end + offset, outVec);
+
+		glm::vec3 directLight = directRadiance(renderRay, albedo, normal);
+
+		glm::vec3 newRadiance = (radiance * brdf + directLight);
+
+		return newRadiance;
 	}
+	return glm::vec3(0, 0, 0);
+}
 		
 
 glm::vec3 Camera::mirrorReflector(Ray renderRay, glm::vec3 normal)
 {
-	return glm::vec3();
+	glm::vec3 offset = 0.0001f * normal;
+	glm::vec3 inDirection = glm::normalize(renderRay.end - renderRay.start);
+	glm::vec3 outDirection = inDirection - (2.0f * glm::dot(inDirection, normal) * normal);
+
+	glm::vec3 radiance = renderEquation(renderRay.end + offset, outDirection);
+	return radiance;
 }
 
 glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo, glm::vec3 normal)
@@ -175,7 +180,7 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo, glm::vec3 norm
 	glm::vec3 offset = 0.0001f * normal; 
 	Ray dummyRay = Ray(renderRay.end + offset, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
 	glm::vec3 shadowRadiance = glm::vec3(0,0,0);
-	int n_samples = 10;
+	int n_samples = 1;
 	for (int i = 0; i < n_samples; i++) {
 		float c1 = dis3(gen);
 		float c2 = dis3(gen);
@@ -194,7 +199,7 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo, glm::vec3 norm
 		} 
 		//std::cout << glm::dot(-1.0f * shadowRay, glm::cross(e1, e2)) << " " << glm::dot(shadowRay, glm::normalize(renderRay.endPointTriangle->calculateNormal())) << std::endl;
 		if (V) {	
-			float G = (glm::dot(-1.0f * shadowRay, glm::cross(e1, e2)) / glm::length(shadowRay)) * (glm::dot(shadowRay, normal) / glm::length(shadowRay)); 
+			float G = (glm::dot(-1.0f * shadowRay,glm::cross(e1, e2)) / glm::length(shadowRay)) * (glm::dot(shadowRay, normal) / glm::length(shadowRay)); 
 			G /= glm::dot(shadowRay, shadowRay);
 			shadowRadiance += (G * glm::length((glm::cross(scene.lightList[0].edge1, scene.lightList[0].edge2)) * glm::vec3(255, 255, 255) * 6));
 			//if (G < -0.01) std::cout << glm::to_string(shadowRadiance);
