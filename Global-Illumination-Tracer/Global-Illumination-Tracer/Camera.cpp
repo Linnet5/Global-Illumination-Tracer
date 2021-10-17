@@ -26,7 +26,7 @@ void Camera::render() {
 		for (int j = 0; j < 800; j++) {
 			glm::vec3 pixelPosition = glm::vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
 			glm::vec3 totalColor = glm::vec3(0,0,0);
-			int raysPerPixel = 50;
+			int raysPerPixel = 500;
 			for (int k = 0; k < raysPerPixel; k++) {
 				totalColor += renderEquation(eye1, glm::normalize(pixelPosition - eye1));
 			}
@@ -57,7 +57,6 @@ void Camera::render() {
 glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 	Ray renderRay = Ray(start, direction, glm::vec3(0, 0, 0));
 	bool touchedObj = false;
-	bool lightSourceTouched = false;
 
 	glm::vec3 brdf = glm::vec3(0, 0, 0);
 	glm::vec3 radiance;
@@ -76,25 +75,20 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 				renderRay.endPointTriangle = &scene.room[tri];
 				if (tri == 5) {
 					if (scene.lightList[0].renderFunction(renderRay, direction)) {
-						return(glm::vec3(255, 255, 255)); // if you want to see the light source when only looking att directlight
-						lightSourceTouched = true;
+						return(glm::vec3(255, 255, 255)); 
 					}
 
 				}
 			}
 		}
 	}	
-
-	if (lightSourceTouched) {
-		return glm::vec3(255.0f, 255.0f, 255.0f); //eller vad L0 är
-	}
 	
 	if (renderRay.endPointTriangle != nullptr) {
 		float reflectance = renderRay.endPointTriangle->material.reflectance;
 		glm::vec3 normal = renderRay.endPointTriangle->calculateNormal();
 		if (reflectance < 1) {	
 			glm::vec3 albedo = ((renderRay.endPointTriangle->color.GetValues() / 255.0f) * reflectance);
-			return directRadiance(renderRay, albedo, normal);
+			//return directRadiance(renderRay, albedo, normal);
 			return lambertianReflector(renderRay, albedo, reflectance, normal);
 		}
 		else{
@@ -107,7 +101,7 @@ glm::vec3 Camera::renderEquation(glm::vec3 start, glm::vec3 direction) {
 		glm::vec3 normal = glm::normalize(renderRay.end - renderRay.endPointSphere->center);
 		if (reflectance < 1) {
 			glm::vec3 albedo = ((renderRay.endPointSphere->color.GetValues() / 255.0f) * reflectance);
-			return directRadiance(renderRay, albedo, normal);
+			//return directRadiance(renderRay, albedo, normal);
 			return lambertianReflector(renderRay, albedo, reflectance, normal);
 		}
 		else {
