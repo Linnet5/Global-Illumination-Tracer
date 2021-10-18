@@ -17,7 +17,6 @@ void Camera::render() {
 	double maxR = 0, maxG = 0, maxB = 0;
 	BMP outImage;
 	outImage.SetSize(800, 800);
-
 	gen = std::mt19937(rd());
 	dis = std::uniform_real_distribution<float>(0, 1);
 	dis3 = std::uniform_real_distribution<float> (0, 3);
@@ -154,7 +153,7 @@ glm::vec3 Camera::lambertianReflector(Ray renderRay, glm::vec3 albedo, float ref
 
 		return newRadiance;
 	}
-	return glm::vec3(0, 0, 0);
+	return directRadiance(renderRay, albedo, normal);
 }
 		
 

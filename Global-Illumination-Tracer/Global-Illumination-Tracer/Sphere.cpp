@@ -2,7 +2,7 @@
 
 Sphere::Sphere()
 {
-	center = glm::vec3(8.0f, 0.0f, -1.0f);
+	center = glm::vec3(6.0f, 0.0f, -2.0f);
 	radius = 1.0f;
 	color = ColorDbl(0, 255, 255);
 	material = Material(1.0f);
