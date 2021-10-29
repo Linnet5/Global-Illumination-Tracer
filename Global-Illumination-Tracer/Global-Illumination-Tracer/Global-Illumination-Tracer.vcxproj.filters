@@ -33,9 +33,6 @@
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vec3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Pixel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -54,19 +51,10 @@
     <ClInclude Include="EasyBMP_VariousBMPutilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="node.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="dsexceptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BinaryTree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Tetrahedron.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shapes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LightSource.h">
@@ -98,9 +86,6 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vec3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Pixel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -114,9 +99,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Tetrahedron.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shapes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LightSource.cpp">

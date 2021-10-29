@@ -5,8 +5,8 @@
 Scene::Scene() {
 	//--Hardcoded room.--//
 
-	Material walls = Material(0.5);
-	Material floorRoof = Material(0.5);
+	Material walls = Material(0.18);
+	Material floorRoof = Material(0.18);
 	Material lightMaterial = Material(0.5);
 
 	//Tak

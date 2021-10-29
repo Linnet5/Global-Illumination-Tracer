@@ -24,7 +24,7 @@ bool LightSource::renderFunction(Ray& renderRay, glm::vec3 direction) {
 
 	bool flag = false;
 	for (int tri = 0; tri < 2; tri++) {
-		if ((tris[tri].mollerTrumbore(renderRay.start, direction, renderRay.end, renderRay.tDistance))) {
+		if ((tris[tri].mollerTrumbore(renderRay.start, direction, renderRay.end, renderRay.tDistance))) { //check if ray colides with the light source
 			renderRay.endPointTriangle = &tris[tri];
 			flag = true;
 			}
