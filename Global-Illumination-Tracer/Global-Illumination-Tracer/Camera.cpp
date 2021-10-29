@@ -141,7 +141,7 @@ glm::vec3 Camera::lambertianReflector(Ray renderRay, glm::vec3 albedo, float ref
 		outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
 		outVec = glm::normalize(glm::rotate(outVec, azimuth, normal));
 
-		glm::vec3 brdf = (albedo *0.8f* cos(theta) * sin(theta) * pi) ;
+		glm::vec3 brdf = (albedo * cos(theta) * sin(theta) * pi) ;
 
 		glm::vec3 radiance = renderEquation(renderRay.end + offset, outVec);
 
