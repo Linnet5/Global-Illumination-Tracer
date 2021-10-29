@@ -23,12 +23,6 @@ bool Sphere::renderFunction(Ray& renderRay, glm::vec3 direction)
 			renderRay.end = renderRay.start + d * direction;
 			renderRay.endPointTriangle = nullptr;
 			renderRay.endPointSphere = this;
-			/*
-			renderRay.center = center;
-			renderRay.radius = radius;
-			renderRay.sphereColor = color;
-			renderRay.sphereReflectance = material.reflectance;
-			*/
 			flag = true;
 		}
 	}

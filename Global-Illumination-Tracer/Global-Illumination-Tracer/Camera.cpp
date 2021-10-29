@@ -11,8 +11,6 @@ Camera::Camera() {
 
 void Camera::render() {
 	
-	glm::vec3 dummy = glm::vec3(0, 0, 0);
-
 	auto pixels = new Pixel[800][800];
 	double maxR = 0, maxG = 0, maxB = 0;
 	BMP outImage;
@@ -25,7 +23,7 @@ void Camera::render() {
 		for (int j = 0; j < 800; j++) {
 			glm::vec3 pixelPosition = glm::vec3(0, -1 + 0.0025 * i, 1 - 0.0025 * j);
 			glm::vec3 totalColor = glm::vec3(0,0,0);
-			int raysPerPixel = 500;
+			int raysPerPixel = 50;
 			for (int k = 0; k < raysPerPixel; k++) {
 				totalColor += renderEquation(eye1, glm::normalize(pixelPosition - eye1));
 			}
@@ -143,13 +141,13 @@ glm::vec3 Camera::lambertianReflector(Ray renderRay, glm::vec3 albedo, float ref
 		outVec = glm::rotate(outVec, theta, tangent);// kolla documentation för hur vi gör detta https://glm.g-truc.net/0.9.3/api/a00199.html
 		outVec = glm::normalize(glm::rotate(outVec, azimuth, normal));
 
-		glm::vec3 brdf = (albedo * cos(theta) * sin(theta) * pi) / ((reflectance));
+		glm::vec3 brdf = (albedo *0.8f* cos(theta) * sin(theta) * pi) ;
 
 		glm::vec3 radiance = renderEquation(renderRay.end + offset, outVec);
 
 		glm::vec3 directLight = directRadiance(renderRay, albedo, normal);
 
-		glm::vec3 newRadiance = (radiance * brdf + directLight);
+		glm::vec3 newRadiance = (radiance * brdf + directLight) / ((reflectance));
 
 		return newRadiance;
 	}
@@ -173,11 +171,11 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo, glm::vec3 norm
 	glm::vec3 e2 = glm::normalize(scene.lightList[0].edge2); 
 	glm::vec3 offset = 0.0001f * normal; 
 	Ray dummyRay = Ray(renderRay.end + offset, glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
-	glm::vec3 shadowRadiance = glm::vec3(0,0,0);
+	glm::vec3 dirRadiance = glm::vec3(0,0,0);
 	int n_samples = 10;
 	for (int i = 0; i < n_samples; i++) {
-		float c1 = dis3(gen);
-		float c2 = dis3(gen);
+		float c1 = dis(gen);
+		float c2 = dis(gen);
 		
 		bool V = true;
 
@@ -195,15 +193,15 @@ glm::vec3 Camera::directRadiance(Ray renderRay, glm::vec3 albedo, glm::vec3 norm
 		if (V) {	
 			float G = (glm::dot(-1.0f * shadowRay,glm::cross(e1, e2)) / glm::length(shadowRay)) * (glm::dot(shadowRay, normal) / glm::length(shadowRay)); 
 			G /= glm::dot(shadowRay, shadowRay);
-			shadowRadiance += (G * glm::length((glm::cross(scene.lightList[0].edge1, scene.lightList[0].edge2)) * glm::vec3(255, 255, 255) * 6));
+			dirRadiance += (G * glm::length((glm::cross(scene.lightList[0].edge1, scene.lightList[0].edge2)) * glm::vec3(255, 255, 255) * 6));
 			//if (G < -0.01) std::cout << glm::to_string(shadowRadiance);
 		}
 	}
-	shadowRadiance =  (shadowRadiance * albedo)  / (pi * n_samples);
+	dirRadiance =  (dirRadiance * albedo)  / (pi * n_samples);
 	//std::cout << glm::to_string(albedo) << std::endl;
 	//std::cout << glm::to_string(shadowRadiance) << std::endl;
 
-	return shadowRadiance;
+	return dirRadiance;
 	
 	//std::cout << (factor * shadowRadiance).x << " " << (factor * shadowRadiance).y << " " << (factor * shadowRadiance).z << " " << std::endl;
 	//return factor * shadowRadiance;

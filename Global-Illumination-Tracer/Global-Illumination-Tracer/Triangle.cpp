@@ -45,7 +45,7 @@ bool Triangle::mollerTrumbore(glm::vec3 start, glm::vec3 rayDirection, glm::vec3
 	edge1 = v1.getCords() - v0.getCords();
 	edge2 = v2.getCords() - v0.getCords();
 
-	P = glm::cross(rayDirection, edge2); // behövs = ? kan vara fel källa :)
+	P = glm::cross(rayDirection, edge2);
 	a = glm::dot(edge1, P);
 	if (a > -EPSILON && a < EPSILON) return false; //parallel
 
