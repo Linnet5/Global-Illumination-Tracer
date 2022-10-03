@@ -1,13 +1,14 @@
 #pragma once
-#include "Vec3.h"
+#include "glm/glm.hpp"
+
 class Direction
 {
 private:
-	Vec3 direction;
+	glm::vec3 direction;
 
 public:
 	Direction();
 	Direction(double inX, double inY, double inZ);
-	Direction(Vec3 inVec);
+	Direction(glm::vec3 inVec);
 };
 

@@ -1,14 +1,14 @@
 #pragma once
-#include "Vec3.h"
+#include "glm/glm.hpp"
 class ColorDbl
 {
 private:
-	Vec3 values;
+	glm::vec3 values;
 
 public:
 	ColorDbl();
 	ColorDbl(double inR, double inG, double inB);
-	ColorDbl(Vec3 inVec);
-	Vec3 GetValues();
+	ColorDbl(glm::vec3 inVec);
+	glm::vec3 GetValues();
 };
 
